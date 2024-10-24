@@ -7,6 +7,12 @@ namespace BeanScene.Models;
 
 public class RestaurantArea
 {
-        public int Id { get; set; }
-
+    public RestaurantArea(string name)
+    {
+        Name = name;
+    }
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public int RestaurantId { get; set; }
+    public Restaurant Restaurant { get; set; } = default!;
 }
