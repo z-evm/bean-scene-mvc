@@ -7,5 +7,4 @@ namespace BeanScene.Models;
 
 public class Restaurant
 {
-        
 }

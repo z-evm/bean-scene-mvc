@@ -6,5 +6,4 @@ using System.Threading.Tasks;
 namespace BeanScene.Models;
 public class Reservation
 {
-        
 }

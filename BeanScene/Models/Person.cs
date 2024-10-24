@@ -7,5 +7,6 @@ namespace BeanScene.Models;
 
 public class Person
 {
+    
         
 }

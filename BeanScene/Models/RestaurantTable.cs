@@ -8,5 +8,4 @@ namespace BeanScene.Models;
 
 public class RestaurantTable
 {
-    
 }

@@ -10,6 +10,7 @@ This is an MVC system for the Bean Scene reservation system.
   - `Microsoft.EntityFrameworkCore.Sqlite` 8.0.8
   - `Microsoft.EntityFrameworkCore.Tools` 8.0.8
   - `"Microsoft.AspNetCore.Identity.UI"`  8.0.8
+  - `Microsoft.EntityFrameworkCore.SqlServer` 8.0.8
 ## Setup Instructions
 
 1. Clone the repository to your local machine:
