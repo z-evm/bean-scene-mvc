@@ -7,4 +7,6 @@ namespace BeanScene.Models;
 
 public class Restaurant
 {
+        public int Id { get; set; }
+
 }

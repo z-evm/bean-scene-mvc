@@ -16,5 +16,5 @@ This is an MVC system for the Bean Scene reservation system.
 1. Clone the repository to your local machine:
    git clone https://github.com/Bean-Scene-Zachary-and-Alex/Bean-Scene-ReservationSystem.git
 
-2.  Configured your local database in appsetting.json 
+2.  Configured your local database in appsetting.json  "Server=beanscene.database.windows.net;Database=BeanScene;User ID=BeanScene;Password=Programming1!;MultipleActiveResultSets=true;TrustServerCertificate=True",
 3.  Push all migration  : dotnet ef database update 

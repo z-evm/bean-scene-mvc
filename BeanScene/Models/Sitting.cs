@@ -7,4 +7,6 @@ namespace BeanScene.Models;
 
 public class Sitting
 {
+        public int Id { get; set; }
+
 }

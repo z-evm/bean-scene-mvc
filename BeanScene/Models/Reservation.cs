@@ -6,4 +6,6 @@ using System.Threading.Tasks;
 namespace BeanScene.Models;
 public class Reservation
 {
+        public int Id { get; set; }
+
 }
