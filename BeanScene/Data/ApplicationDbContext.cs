@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using BeanScean.Models; 
+using BeanScene.Models; 
 
-namespace BeanScean.Data
+namespace BeanScene.Data
 {
     public class ApplicationDbContext : IdentityDbContext
     {
