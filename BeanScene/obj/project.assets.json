@@ -3024,11 +3024,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/ramazancarpan/Desktop/Asessment/Programing/Final/BeanScene/BeanScene.csproj",
+      "projectUniqueName": "/Users/ramazancarpan/Desktop/Asessment/Programing/AssesmentRepo/Bean-Scene-ReservationSystem/BeanScene/BeanScene.csproj",
       "projectName": "BeanScene",
-      "projectPath": "/Users/ramazancarpan/Desktop/Asessment/Programing/Final/BeanScene/BeanScene.csproj",
+      "projectPath": "/Users/ramazancarpan/Desktop/Asessment/Programing/AssesmentRepo/Bean-Scene-ReservationSystem/BeanScene/BeanScene.csproj",
       "packagesPath": "/Users/ramazancarpan/.nuget/packages/",
-      "outputPath": "/Users/ramazancarpan/Desktop/Asessment/Programing/Final/BeanScene/obj/",
+      "outputPath": "/Users/ramazancarpan/Desktop/Asessment/Programing/AssesmentRepo/Bean-Scene-ReservationSystem/BeanScene/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/ramazancarpan/.nuget/NuGet/NuGet.Config"

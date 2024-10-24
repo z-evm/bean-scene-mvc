@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BeanScene")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1df705bacbeaec544f762c03f2675c15003dd6ab")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0891ba6ccd0b89870eb8c7a8556469f891208fbd")]
 [assembly: System.Reflection.AssemblyProductAttribute("BeanScene")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BeanScene")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
