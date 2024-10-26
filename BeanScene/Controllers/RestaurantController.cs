@@ -4,11 +4,11 @@ using BeanScene.Models;
 
 namespace BeanScene.Controllers;
 
-public class HomeController : Controller
+public class RestaurantController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    private readonly ILogger<RestaurantController> _logger;
 
-    public HomeController(ILogger<HomeController> logger)
+    public RestaurantController(ILogger<RestaurantController> logger)
     {
         _logger = logger;
     }
