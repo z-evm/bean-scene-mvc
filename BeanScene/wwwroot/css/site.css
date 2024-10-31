@@ -12,6 +12,26 @@
     src: url("../fonts/OpenSans-Regular.ttf");
 }
 
+@font-face {
+    font-family: Open Sans Light;
+    src: url("../fonts/OpenSans-Light.ttf");
+}
+
+@font-face {
+    font-family: Open Sans Light Italic;
+    src: url("../fonts/OpenSans-LightItalic.ttf");
+}
+
+@font-face {
+    font-family: Open Sans Bold;
+    src: url("../fonts/OpenSans-Bold.ttf");
+}
+
+@font-face {
+    font-family: Open Sans Bold Italic;
+    src: url("../fonts/OpenSans-BoldItalic.ttf");
+}
+
 html {
     font-size: 14px;
 }
@@ -38,6 +58,9 @@ body {
 .logo {
     width:150px;
     height:auto;
+}
+h1, h2, h3, h4, h5, h6 {
+    font-family:Open Sans Light;
 }
 h1, a, button {
     color:var(--bean-light-blue);
