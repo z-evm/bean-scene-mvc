@@ -13,12 +13,11 @@ public class Reservation
         Status = status;
     }
     public int Id { get; set; }
-      public DateTime ReservationTime { get; set; }
+    public DateTime ReservationTime { get; set; }
     public int Pax { get; set; }
     public string Status { get; set; }
     public int PersonId { get; set; }
     public Person Person { get; set; } = default!;
-
     public int SittingId { get; set; }
     public Sitting Sitting { get; set; } = default!;
 

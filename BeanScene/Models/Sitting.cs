@@ -14,10 +14,8 @@ public class Sitting
         EndTime = endTime;
     }
     public int Id { get; set; }
-
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
-
     public int RestaurantTableId { get; set; }
     public RestaurantTable RestaurantTable { get; set; } = default!;
 }
