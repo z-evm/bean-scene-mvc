@@ -10,7 +10,7 @@ namespace BeanScene.Data
             : base(options){}
         
         
-        public DbSet<Person> People { get; set; }
+        public DbSet<Person> Persons { get; set; }
         public DbSet<Restaurant> Restaurants { get; set; }
 
         public DbSet<ReservationStatus> ReservationStatuses{get;set;}

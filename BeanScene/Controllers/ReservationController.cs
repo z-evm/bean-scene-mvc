@@ -62,7 +62,7 @@ namespace BeanScene.Controllers
             if (ModelState.IsValid)
             {
                 // Find or create the person based on their email
-                var person = await _context.People.FirstOrDefaultAsync(p => p.Email == Email);
+                var person = await _context.Persons.FirstOrDefaultAsync(p => p.Email == Email);
                 if (person == null)
                 {
                     person = new Person
@@ -160,7 +160,7 @@ namespace BeanScene.Controllers
             if (ModelState.IsValid)
             {
                 // Update person details based on provided Name, Email, and Phone
-                var person = await _context.People.FindAsync(reservation.PersonId);
+                var person = await _context.Persons.FindAsync(reservation.PersonId);
                 if (person != null)
                 {
                     person.Name = Name;
