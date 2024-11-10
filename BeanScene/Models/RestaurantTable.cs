@@ -8,12 +8,11 @@ namespace BeanScene.Models;
 
 public class RestaurantTable
 {
-    public RestaurantTable(int number)
+    public RestaurantTable(string number)
     {
        Number = number;
     }
     public int Id { get; set; }
-    public int Number { get; set; }
-    public int RestaurantAreaId { get; set; }
-    public RestaurantArea RestaurantArea { get; set; } = default!;
+    public string Number { get; set; }
+     public List<Reservation> Reservations { get; set; } = new(); // restauranta table can be many reservation suchas , M1 can be many reservation in one day ,breakfast,lunch , dinner
 }

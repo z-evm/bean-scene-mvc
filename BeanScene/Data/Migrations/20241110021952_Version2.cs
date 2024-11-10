@@ -5,7 +5,7 @@
 namespace BeanScene.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class BeanScenev2 : Migration
+    public partial class Version2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

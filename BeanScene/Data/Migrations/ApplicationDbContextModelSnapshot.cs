@@ -30,7 +30,15 @@ namespace BeanScene.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -39,7 +47,9 @@ namespace BeanScene.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique()
+                        .HasFilter("[UserId] IS NOT NULL");
 
                     b.ToTable("People");
                 });
@@ -52,29 +62,53 @@ namespace BeanScene.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("Duration")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Pax")
                         .HasColumnType("int");
 
                     b.Property<int>("PersonId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("ReservationTime")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("ReservationStatusId")
+                        .HasColumnType("int");
 
                     b.Property<int>("SittingId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("Start")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
                     b.HasIndex("PersonId");
 
+                    b.HasIndex("ReservationStatusId");
+
                     b.HasIndex("SittingId");
 
                     b.ToTable("Reservations");
+                });
+
+            modelBuilder.Entity("BeanScene.Models.ReservationStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ReservationStatuses");
                 });
 
             modelBuilder.Entity("BeanScene.Models.Restaurant", b =>
@@ -110,7 +144,7 @@ namespace BeanScene.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RestaurantId")
+                    b.Property<int?>("RestaurantId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -128,10 +162,11 @@ namespace BeanScene.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Number")
-                        .HasColumnType("int");
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RestaurantAreaId")
+                    b.Property<int?>("RestaurantAreaId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -149,18 +184,31 @@ namespace BeanScene.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("EndTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("RestaurantTableId")
+                    b.Property<int>("Capacity")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("StartTime")
+                    b.Property<bool>("Closed")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("End")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RestaurantId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Start")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RestaurantTableId");
+                    b.HasIndex("RestaurantId");
 
                     b.ToTable("Sittings");
                 });
@@ -367,11 +415,27 @@ namespace BeanScene.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ReservationRestaurantTable", b =>
+                {
+                    b.Property<int>("ReservationsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TablesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ReservationsId", "TablesId");
+
+                    b.HasIndex("TablesId");
+
+                    b.ToTable("ReservationRestaurantTable");
+                });
+
             modelBuilder.Entity("BeanScene.Models.Person", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
+                        .WithOne()
+                        .HasForeignKey("BeanScene.Models.Person", "UserId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("User");
                 });
@@ -384,48 +448,48 @@ namespace BeanScene.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("BeanScene.Models.ReservationStatus", "ReservationStatus")
+                        .WithMany("Reservations")
+                        .HasForeignKey("ReservationStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("BeanScene.Models.Sitting", "Sitting")
-                        .WithMany()
+                        .WithMany("Reservations")
                         .HasForeignKey("SittingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Person");
 
+                    b.Navigation("ReservationStatus");
+
                     b.Navigation("Sitting");
                 });
 
             modelBuilder.Entity("BeanScene.Models.RestaurantArea", b =>
                 {
+                    b.HasOne("BeanScene.Models.Restaurant", null)
+                        .WithMany("RestaurantAreas")
+                        .HasForeignKey("RestaurantId");
+                });
+
+            modelBuilder.Entity("BeanScene.Models.RestaurantTable", b =>
+                {
+                    b.HasOne("BeanScene.Models.RestaurantArea", null)
+                        .WithMany("Tables")
+                        .HasForeignKey("RestaurantAreaId");
+                });
+
+            modelBuilder.Entity("BeanScene.Models.Sitting", b =>
+                {
                     b.HasOne("BeanScene.Models.Restaurant", "Restaurant")
-                        .WithMany()
+                        .WithMany("Sittings")
                         .HasForeignKey("RestaurantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Restaurant");
-                });
-
-            modelBuilder.Entity("BeanScene.Models.RestaurantTable", b =>
-                {
-                    b.HasOne("BeanScene.Models.RestaurantArea", "RestaurantArea")
-                        .WithMany()
-                        .HasForeignKey("RestaurantAreaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("RestaurantArea");
-                });
-
-            modelBuilder.Entity("BeanScene.Models.Sitting", b =>
-                {
-                    b.HasOne("BeanScene.Models.RestaurantTable", "RestaurantTable")
-                        .WithMany()
-                        .HasForeignKey("RestaurantTableId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("RestaurantTable");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -477,6 +541,43 @@ namespace BeanScene.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ReservationRestaurantTable", b =>
+                {
+                    b.HasOne("BeanScene.Models.Reservation", null)
+                        .WithMany()
+                        .HasForeignKey("ReservationsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BeanScene.Models.RestaurantTable", null)
+                        .WithMany()
+                        .HasForeignKey("TablesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("BeanScene.Models.ReservationStatus", b =>
+                {
+                    b.Navigation("Reservations");
+                });
+
+            modelBuilder.Entity("BeanScene.Models.Restaurant", b =>
+                {
+                    b.Navigation("RestaurantAreas");
+
+                    b.Navigation("Sittings");
+                });
+
+            modelBuilder.Entity("BeanScene.Models.RestaurantArea", b =>
+                {
+                    b.Navigation("Tables");
+                });
+
+            modelBuilder.Entity("BeanScene.Models.Sitting", b =>
+                {
+                    b.Navigation("Reservations");
                 });
 #pragma warning restore 612, 618
         }

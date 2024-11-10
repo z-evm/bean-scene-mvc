@@ -6,16 +6,31 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BeanScene.Models;
 
-public class Sitting
-{
-    public Sitting(DateTime startTime, DateTime endTime)
-    {
-        StartTime = startTime;
-        EndTime = endTime;
-    }
-    public int Id { get; set; }
-    public DateTime StartTime { get; set; }
-    public DateTime EndTime { get; set; }
-    public int RestaurantTableId { get; set; }
-    public RestaurantTable RestaurantTable { get; set; } = default!;
+public enum SittingType {
+    Breakfast,
+    Lunch,
+    Dinner,
+    SpecialEvent
+
 }
+public class Sitting
+    {
+        public int Id { get; set; }
+
+        public string Name { get; set; }=default!; //"Friday Dinner" ,Saturday Brunch
+   
+        public DateTime Start { get; set; }  // Breakfast Start time  like  07 :30
+        public DateTime End { get; set; }  // Breakfast Finish Time like 11:00
+
+        public int Capacity { get; set; } // Dinner we have 40 people capacity 
+        public bool Closed { get; set; }  // This  is marked as closed
+
+        //navigation properties
+        public int RestaurantId { get; set; }
+        public Restaurant? Restaurant { get; set; }
+        
+        public SittingType Type { get; set; }//Breakfast .Lunch ,Dinner,Special Event
+
+        public List<Reservation> Reservations { get; set; } = new();  //Sitting can be many reservation
+
+    }
