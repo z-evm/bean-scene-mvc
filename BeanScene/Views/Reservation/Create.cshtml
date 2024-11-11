@@ -6,51 +6,56 @@
 
 <h2>Create Reservation</h2>
 
+
+}
+
 <form asp-action="Create" method="post">
-    @* Anti-forgery token for security *@
     @Html.AntiForgeryToken()
 
     <div class="form-group">
-        <label for="Name">Name</label>
-        <input type="text" name="Name" class="form-control" />
+        <label asp-for="Person.Name">Name</label>
+        <input asp-for="Person.Name" class="form-control" />
+        <span asp-validation-for="Person.Name" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label for="Email">Email</label>
-        <input type="email" name="Email" class="form-control" />
+        <label asp-for="Person.Email">Email</label>
+        <input asp-for="Person.Email" class="form-control" />
+        <span asp-validation-for="Person.Email" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label for="Phone">Phone Number</label>
-        <input type="tel" name="Phone" class="form-control" />
+        <label asp-for="Person.Phone">Phone Number</label>
+        <input asp-for="Person.Phone" class="form-control" />
+        <span asp-validation-for="Person.Phone" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="Start" class="control-label">Reservation Date / Time</label>
+        <label asp-for="Start">Reservation Date / Time</label>
         <input asp-for="Start" type="datetime-local" class="form-control" />
         <span asp-validation-for="Start" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="Duration" class="control-label">Duration (in minutes)</label>
+        <label asp-for="Duration">Duration (in minutes)</label>
         <input asp-for="Duration" type="number" class="form-control" />
         <span asp-validation-for="Duration" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="Pax" class="control-label">Number of Guests</label>
+        <label asp-for="Pax">Number of Guests</label>
         <input asp-for="Pax" type="number" class="form-control" />
         <span asp-validation-for="Pax" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="Notes" class="control-label">Notes</label>
+        <label asp-for="Notes">Notes</label>
         <textarea asp-for="Notes" class="form-control"></textarea>
         <span asp-validation-for="Notes" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="SittingId" class="control-label">Select Sitting</label>
+        <label asp-for="SittingId">Select Sitting</label>
         <select asp-for="SittingId" class="form-control" asp-items="@(new SelectList((IEnumerable<BeanScene.Models.Sitting>)ViewData["Sittings"], "Id", "Name"))">
             <option value="">-- Please select a sitting --</option>
         </select>

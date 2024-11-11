@@ -10,14 +10,14 @@ namespace BeanScene.Data
             : base(options){}
         
         
-        public DbSet<Person> Persons { get; set; }
-        public DbSet<Restaurant> Restaurants { get; set; }
+        public DbSet<Person> Persons { get; set; }=default!;
+        public DbSet<Restaurant> Restaurants { get; set; }=default!;
 
-        public DbSet<ReservationStatus> ReservationStatuses{get;set;}
-        public DbSet<RestaurantArea> RestaurantAreas { get; set; }
-        public DbSet<RestaurantTable> RestaurantTables { get; set; }
-        public DbSet<Sitting> Sittings { get; set; }
-        public DbSet<Reservation> Reservations { get; set; }
+        public DbSet<ReservationStatus> ReservationStatuses{get;set;}=default!;
+        public DbSet<RestaurantArea> RestaurantAreas { get; set; }=default!;
+        public DbSet<RestaurantTable> RestaurantTables { get; set; }=default!;
+        public DbSet<Sitting> Sittings { get; set; }=default!;
+        public DbSet<Reservation> Reservations { get; set; }=default!;
       
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,6 +29,11 @@ namespace BeanScene.Data
                 .WithOne() // No navigation from IdentityUser back to Person
                 .HasForeignKey<Person>(p => p.UserId)
                 .OnDelete(DeleteBehavior.SetNull); // 
+
+
+            modelBuilder.Entity<Reservation>()
+                .HasMany(r => r.Tables)
+                .WithMany(t => t.Reservations);
          
         }
     }

@@ -16,8 +16,8 @@ namespace BeanScene.Models
         public IdentityUser? User { get; set; } // Navigation property to IdentityUser
 
         //  properties specific to Person
-        public required string Name { get; set; }
-        public required string Phone { get; set; }
-        public required string Email { get; set; }
+        public string? Name { get; set; }
+        public  string? Phone { get; set; }
+        public  string? Email { get; set; }
     }
 }

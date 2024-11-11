@@ -13,7 +13,7 @@ namespace BeanScene.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20241110021459_init")]
-    partial class init
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

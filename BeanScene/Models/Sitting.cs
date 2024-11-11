@@ -33,4 +33,6 @@ public class Sitting
 
         public List<Reservation> Reservations { get; set; } = new();  //Sitting can be many reservation
 
+        
+
     }
