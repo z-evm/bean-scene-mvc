@@ -23,37 +23,16 @@ namespace BeanScene.Controllers
         public async Task<IActionResult> Index()
         {
             var reservations = await _context.Reservations
-                .Include(r => r.Person)
-                .Include(r => r.Sitting)
-                .Include(r =>r.ReservationStatus)
-                .Include(r => r.Tables)
+                .Include(r => r.Person) //get person 
+                .Include(r => r.Sitting)//get sitting time
+                .Include(r =>r.ReservationStatus) //get reservation status
+                .Include(r => r.Tables)// get reservation tables
                 .ToListAsync();
             return View(reservations);
         }
 
 
 
-
-
-        // GET: Reservation/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var reservation = await _context.Reservations
-                .Include(r => r.Person)
-                .Include(r => r.Sitting)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (reservation == null)
-            {
-                return NotFound();
-            }
-
-            return View(reservation);
-        }
 
 
 
@@ -67,31 +46,24 @@ namespace BeanScene.Controllers
             return View();
         }
 
+
+        //reservation create Working
+        //post reservation
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Start,Duration,Pax,Notes,SittingId,Person.Name,Person.Email,Person.Phone")] Reservation reservation)
+        public async Task<IActionResult> Create( Reservation reservation)
         {
-            if (!ModelState.IsValid)
-            {
-                // Log all validation errors to the console for debugging
-                foreach (var error in ModelState)
-                {
-                    Console.WriteLine($"Key: {error.Key}, Error: {string.Join(", ", error.Value.Errors.Select(e => e.ErrorMessage))}");
-                }
-
-                // Reload sittings and return the view with validation messages
-                ModelState.AddModelError("", "Please correct the highlighted errors.");
-                ViewData["Sittings"] = await _context.Sittings.Where(s => !s.Closed).ToListAsync();
-                return View(reservation);
-            }
+            
 
             try
             {
+                if(ModelState.IsValid){
+
+                
                 // Find or create the person based on their email
-               var person = await _context.Persons.FirstOrDefaultAsync(p => p.Email == reservation.Person.Email);
+                var person = await _context.Persons.FirstOrDefaultAsync(p => p.Email == reservation.Person.Email);
                 if (person == null)
                 {
-                    // If person is not found, create a new person using the details from reservation.Person
                     person = new Person
                     {
                         Name = reservation.Person.Name,
@@ -99,27 +71,17 @@ namespace BeanScene.Controllers
                         Phone = reservation.Person.Phone
                     };
 
-
-                    try
-                    {
-                        _context.Add(person);
-                        await _context.SaveChangesAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        ModelState.AddModelError("", "There was an error saving the person details. Please try again.");
-                        Console.WriteLine($"Error saving person to database: {ex.Message}");
-                        ViewData["Sittings"] = await _context.Sittings.Where(s => !s.Closed).ToListAsync();
-                        return View(reservation);
-                    }
+                    _context.Add(person);
+                    await _context.SaveChangesAsync();
                 }
 
                 // Assign person to reservation
                 reservation.PersonId = person.Id;
 
                 // Find the specified sitting and ensure it’s open
-                var sitting = await _context.Sittings.Include(s => s.Reservations)
-                                                    .FirstOrDefaultAsync(s => s.Id == reservation.SittingId);
+                var sitting = await _context.Sittings
+                                            .Include(s => s.Reservations)
+                                            .FirstOrDefaultAsync(s => s.Id == reservation.SittingId);
 
                 if (sitting == null || sitting.Closed)
                 {
@@ -128,22 +90,13 @@ namespace BeanScene.Controllers
                     return View(reservation);
                 }
 
+                reservation.End = reservation.Start.AddMinutes(reservation.Duration);
+
                 // Get a list of available tables for the selected time
-                List<RestaurantTable> availableTables;
-                try
-                {
-                    availableTables = await _context.RestaurantTables
-                        .Include(t => t.Reservations)
-                        .Where(t => t.Reservations.All(r => r.End <= reservation.Start || r.Start >= reservation.End))
-                        .ToListAsync();
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", "There was an error fetching available tables. Please try again.");
-                    Console.WriteLine($"Error retrieving available tables: {ex.Message}");
-                    ViewData["Sittings"] = await _context.Sittings.Where(s => !s.Closed).ToListAsync();
-                    return View(reservation);
-                }
+                var availableTables = await _context.RestaurantTables
+                                                    .Include(t => t.Reservations)
+                                                    .Where(t => t.Reservations.All(r => r.End <= reservation.Start || r.Start >= reservation.End))
+                                                    .ToListAsync();
 
                 if (!availableTables.Any())
                 {
@@ -160,46 +113,46 @@ namespace BeanScene.Controllers
                 reservation.Tables.Add(randomTable);
                 _context.Add(reservation);
 
-                try
-                {
-                    await _context.SaveChangesAsync();
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", "There was an error saving the reservation. Please try again.");
-                    Console.WriteLine($"Error saving reservation to database: {ex.Message}");
-                    ViewData["Sittings"] = await _context.Sittings.Where(s => !s.Closed).ToListAsync();
-                    return View(reservation);
-                }
+                await _context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
+                }
             }
             catch (Exception ex)
             {
+                // Handle all exceptions in a single catch block
                 ModelState.AddModelError("", "An unexpected error occurred. Please try again.");
                 Console.WriteLine($"Unexpected error: {ex.Message}");
                 ViewData["Sittings"] = await _context.Sittings.Where(s => !s.Closed).ToListAsync();
-                return View(reservation);
+                
             }
+            return View(reservation);
         }
 
 
 
 
 
-        // POST: Reservation/Edit/5
+        // POST: Reservation/Edit/1
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Start,Duration,Pax,Notes,SittingId")] Reservation reservation, string Name, string Email, string Phone)
+        public async Task<IActionResult> Edit(int id, Reservation reservation, string Name, string Email, string Phone)
         {
             if (id != reservation.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                // Update person details based on provided Name, Email, and Phone
+                // Reload sittings in case of validation failure
+                ViewData["Sittings"] = await _context.Sittings.Where(s => !s.Closed).ToListAsync();
+                return View(reservation);
+            }
+
+            try
+            {
+                // Find and update the associated Person details
                 var person = await _context.Persons.FindAsync(reservation.PersonId);
                 if (person != null)
                 {
@@ -209,44 +162,60 @@ namespace BeanScene.Controllers
                     _context.Update(person);
                 }
 
-                // Update reservation
-                try
-                {
-                    _context.Update(reservation);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ReservationExists(reservation.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                // Calculate the End time for the reservation
+                reservation.End = reservation.Start.AddMinutes(reservation.Duration);
+
+                // Update the reservation
+                _context.Update(reservation);
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
+            catch (DbUpdateConcurrencyException)
+            {
+                // Directly check if the reservation exists in the database
+                if (!_context.Reservations.Any(e => e.Id == reservation.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception and add a generic error message
+                Console.WriteLine($"Error updating reservation: {ex.Message}");
+                ModelState.AddModelError("", "An unexpected error occurred. Please try again.");
+            }
 
+            // Reload sittings in case of error
             ViewData["Sittings"] = await _context.Sittings.Where(s => !s.Closed).ToListAsync();
             return View(reservation);
         }
 
+                
 
 
-        // GET: Reservation/Delete/5
+
+
+
+            //delete is working
+            // GET: Reservation/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            if (id == null)  // check reservation Id 
             {
                 return NotFound();
             }
 
-            var reservation = await _context.Reservations
+            var reservation = await _context.Reservations  // get reservation data 
                 .Include(r => r.Person)
                 .Include(r => r.Sitting)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Include(r =>r.Tables) //table
+                .FirstOrDefaultAsync(m => m.Id == id); 
+
             if (reservation == null)
             {
                 return NotFound();
@@ -255,23 +224,26 @@ namespace BeanScene.Controllers
             return View(reservation);
         }
 
+
         // POST: Reservation/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var reservation = await _context.Reservations.FindAsync(id);
+            var reservation = await _context.Reservations.FindAsync(id); 
             if (reservation != null)
             {
-                _context.Reservations.Remove(reservation);
-                await _context.SaveChangesAsync();
+                _context.Reservations.Remove(reservation); //remove reservatin data 
+                await _context.SaveChangesAsync(); // and save data 
             }
             return RedirectToAction(nameof(Index));
         }
 
+        // Optional: Helper method to check if a reservation exists
         private bool ReservationExists(int id)
         {
             return _context.Reservations.Any(e => e.Id == id);
         }
+
     }
 }

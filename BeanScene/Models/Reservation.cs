@@ -10,12 +10,12 @@ public class Reservation
     public int Id { get; set; }
     public DateTime Start { get; set; }
     
-    public int Duration =60 ; //duration of the reservation in minutes
+    public int Duration {get;set;} //duration of the reservation in minutes
 
     public int Pax { get; set; } // Number of guests for the reservation
     public string? Notes { get; set; } // Additional notes for the reservatio
 
-    public DateTime End { get => Start.AddMinutes(Duration); }  // calculate reservation time with  start time + duration = End time 
+    public DateTime? End  {get;set;}
 
     //navigation prop
 

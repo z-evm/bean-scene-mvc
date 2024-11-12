@@ -34,6 +34,20 @@ namespace BeanScene.Data
             modelBuilder.Entity<Reservation>()
                 .HasMany(r => r.Tables)
                 .WithMany(t => t.Reservations);
+
+             modelBuilder.Entity<Reservation>()
+                .Property(r => r.ReservationStatusId)
+                .HasDefaultValue(1);
+                    
+            
+            modelBuilder.Entity<Reservation>()
+                    .Property(r => r.End)
+                    .HasComputedColumnSql("DATEADD(MINUTE, [Duration], [Start])");
+
+            
+
+            
+                    
          
         }
     }

@@ -1,1 +1,74 @@
-﻿
+﻿@model BeanScene.Models.Reservation
+
+@{
+    ViewData["Title"] = "Edit Reservation";
+}
+
+<h2>Edit Reservation</h2>
+
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+    
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    
+    <input type="hidden" asp-for="Id" />
+
+    <!-- Person Details -->
+    <div class="form-group">
+        <label for="Name">Name</label>
+        <input type="text" name="Name" value="@Model.Person.Name" class="form-control" />
+        <span asp-validation-for="Person.Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="Email">Email</label>
+        <input type="email" name="Email" value="@Model.Person.Email" class="form-control" />
+        <span asp-validation-for="Person.Email" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="Phone">Phone</label>
+        <input type="text" name="Phone" value="@Model.Person.Phone" class="form-control" />
+        <span asp-validation-for="Person.Phone" class="text-danger"></span>
+    </div>
+
+    <!-- Reservation Details -->
+    <div class="form-group">
+        <label asp-for="Start">Reservation Date/Time</label>
+        <input asp-for="Start" type="datetime-local" class="form-control" />
+        <span asp-validation-for="Start" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Duration">Duration (in minutes)</label>
+        <input asp-for="Duration" type="number" class="form-control" />
+        <span asp-validation-for="Duration" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Pax">Number of Guests</label>
+        <input asp-for="Pax" type="number" class="form-control" />
+        <span asp-validation-for="Pax" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Notes">Notes</label>
+        <textarea asp-for="Notes" class="form-control"></textarea>
+        <span asp-validation-for="Notes" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="SittingId">Select Sitting</label>
+        <select asp-for="SittingId" class="form-control" asp-items="@(new SelectList((IEnumerable<BeanScene.Models.Sitting>)ViewData["Sittings"], "Id", "Name"))">
+            <option value="">-- Please select a sitting --</option>
+        </select>
+        <span asp-validation-for="SittingId" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</form>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
