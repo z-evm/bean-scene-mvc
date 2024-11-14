@@ -10,8 +10,23 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+
+
+builder.Services.AddDefaultIdentity<IdentityUser>(options =>{
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 1;
+})
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+
+
+
+
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
@@ -34,9 +49,14 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+
 app.MapControllerRoute(
       name: "areas",
-      pattern: "{area:exists}/{controller=Admin}/{action=Main}/{id?}");
+      pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

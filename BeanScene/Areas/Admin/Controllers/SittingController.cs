@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace BeanScene.Areas.Admin.Controllers
 {
-    [Route("[controller]")]
+    [Authorize(Roles ="Admin"),Area("Admin")]
     public class SittingController : Controller
     {
         private readonly ILogger<SittingController> _logger;

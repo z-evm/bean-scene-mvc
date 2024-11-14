@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BeanScene.Areas.Staff.Controllers
 {
-    [Area("Staff")]
+    [Authorize(Roles ="Staff,Admin"),Area("Staff")]
     public class HomeController : Controller
     {
         public IActionResult Index()
