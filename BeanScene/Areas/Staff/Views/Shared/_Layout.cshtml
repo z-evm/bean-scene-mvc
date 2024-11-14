@@ -25,9 +25,11 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Reservation" asp-action="Create">Reservations </a>
+                            <a class="nav-link text-dark" asp-area="Staff" asp-controller="StaffArea" asp-action="Create">Reservations </a>
                         </li>
-                        <a class="nav-link text-dark" asp-area="Staff" asp-controller="Reservation" asp-action="Index">Reservations List</a>
+                        <li>
+                            <a class="nav-link text-dark" asp-area="Staff" asp-controller="StaffArea" asp-action="Index">Reservations List</a>
+                        </li>
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item">

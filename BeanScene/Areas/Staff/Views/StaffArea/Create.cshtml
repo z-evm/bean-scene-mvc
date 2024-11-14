@@ -1,0 +1,98 @@
+@model BeanScene.Models.Reservation
+
+@{
+    ViewData["Title"] = "Create Reservation";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Create" method="post"> <!--Create action Post-->
+    @Html.AntiForgeryToken()<!-- This will generate the anti-forgery token -->
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="Person.Name">Name</label>
+        <input asp-for="Person.Name" class="form-control" />
+        <span asp-validation-for="Person.Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Person.Email">Email</label>
+        <input asp-for="Person.Email" class="form-control" />
+        <span asp-validation-for="Person.Email" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Person.Phone">Phone Number</label>
+        <input asp-for="Person.Phone" class="form-control" />
+        <span asp-validation-for="Person.Phone" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Start">Reservation Date / Time</label>
+        <input asp-for="Start" type="datetime-local" class="form-control" id="Start" />
+        <span asp-validation-for="Start" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="SittingId">Select Sitting</label>
+        <select asp-for="SittingId" class="form-control" asp-items="@(new SelectList((IEnumerable<BeanScene.Models.Sitting>)ViewData["Sittings"]!, "Id", "Name"))" id="SittingId">
+            <option value="">-- Please select a sitting --</option>
+        </select>
+        <span asp-validation-for="SittingId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+    <label for="Tables">Select Tables</label>
+    <select id="tableSelect" class="form-control" name="selectedTableIds" multiple>
+        <option value="">-- Select Tables --</option>
+        <!-- Options will be populated by JavaScript based on the selected time and sitting -->
+    </select>
+    <span asp-validation-for="Tables" class="text-danger"></span>
+    </div>
+
+
+    <div class="form-group">
+        <label asp-for="Pax">Number of Guests</label>
+        <input asp-for="Pax" type="number" class="form-control" />
+        <span asp-validation-for="Pax" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Notes">Notes</label>
+        <textarea asp-for="Notes" class="form-control"></textarea>
+        <span asp-validation-for="Notes" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create Reservation</button>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        document.getElementById("Start").addEventListener("change", function () {
+            const selectedTime = this.value;
+            const sittingId = document.getElementById("SittingId").value;
+
+            if (!sittingId) {
+                alert("Please select a sitting first.");
+                return;
+            }
+
+            fetch(`/Reservation/GetAvailableTables?sittingId=${sittingId}&startTime=${encodeURIComponent(selectedTime)}`)
+                .then(response => response.json())
+                .then(data => {
+                    const tableSelect = document.getElementById("tableSelect");
+                    tableSelect.innerHTML = '<option value="">-- Select Tables --</option>';
+                    data.forEach(table => {
+                        const option = document.createElement("option");
+                        option.value = table.id;
+                        option.text = table.number; // Assuming `table.number` represents the table identifier
+                        tableSelect.appendChild(option);
+                    });
+                });
+        });
+    </script>
+}
+
