@@ -20,7 +20,7 @@ public class Reservation
     //navigation prop
 
     public int PersonId { get; set; }
-    public Person Person { get; set; } = new Person();
+    public Person Person { get; set; } =default!;
     public int SittingId { get; set; }
     public Sitting? Sitting { get; set; } = default!;
 

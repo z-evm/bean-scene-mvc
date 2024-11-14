@@ -4,13 +4,12 @@
     ViewData["Title"] = "Create Reservation";
 }
 
-<h2>Create Reservation</h2>
+<h2>@ViewData["Title"]</h2>
 
 
-}
 
-<form asp-action="Create" method="post">
-    @Html.AntiForgeryToken()
+<form asp-action="Create" method="post">  <!--Create action Post-->
+    @Html.AntiForgeryToken()<!-- This will generate the anti-forgery token -->
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
     <div class="form-group">
@@ -57,7 +56,7 @@
 
     <div class="form-group">
         <label asp-for="SittingId">Select Sitting</label>
-        <select asp-for="SittingId" class="form-control" asp-items="@(new SelectList((IEnumerable<BeanScene.Models.Sitting>)ViewData["Sittings"], "Id", "Name"))">
+        <select asp-for="SittingId" class="form-control" asp-items="@(new SelectList((IEnumerable<BeanScene.Models.Sitting>)ViewData["Sittings"]!, "Id", "Name"))"> <!-- dropdown  for sittings -->
             <option value="">-- Please select a sitting --</option>
         </select>
         <span asp-validation-for="SittingId" class="text-danger"></span>

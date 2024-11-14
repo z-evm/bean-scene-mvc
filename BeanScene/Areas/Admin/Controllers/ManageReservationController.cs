@@ -2,7 +2,7 @@
 
 namespace BeanScene.Areas.Admin.Controllers
 {
-    public class ManagereservationsController : Controller
+    public class ManagereservationController : Controller
     {
         public IActionResult Index()
         {

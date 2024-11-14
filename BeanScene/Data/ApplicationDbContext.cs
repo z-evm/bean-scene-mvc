@@ -25,22 +25,27 @@ namespace BeanScene.Data
 
 
              modelBuilder.Entity<Person>()
-                .HasOne(p => p.User)
+                .HasOne(p => p.User) // one
                 .WithOne() // No navigation from IdentityUser back to Person
                 .HasForeignKey<Person>(p => p.UserId)
                 .OnDelete(DeleteBehavior.SetNull); // 
 
+          
 
-            modelBuilder.Entity<Reservation>()
+
+
+            modelBuilder.Entity<Reservation>() //many to many
                 .HasMany(r => r.Tables)
                 .WithMany(t => t.Reservations);
 
-             modelBuilder.Entity<Reservation>()
+
+
+             modelBuilder.Entity<Reservation>() // give as defeult status "Pending"
                 .Property(r => r.ReservationStatusId)
-                .HasDefaultValue(1);
+                .HasDefaultValue(1); 
                     
             
-            modelBuilder.Entity<Reservation>()
+            modelBuilder.Entity<Reservation>() //Calculate End time on sql server side 
                     .Property(r => r.End)
                     .HasComputedColumnSql("DATEADD(MINUTE, [Duration], [Start])");
 
