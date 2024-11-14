@@ -84,15 +84,14 @@
                 .then(response => response.json())
                 .then(data => {
                     const tableSelect = document.getElementById("tableSelect");
-                    tableSelect.innerHTML = '<option value="">-- Select Tables --</option>';
+                    tableSelect.innerHTML = '<option value="">-- Select Table --</option>';
                     data.forEach(table => {
                         const option = document.createElement("option");
                         option.value = table.id;
-                        option.text = table.number; // Assuming `table.number` represents the table identifier
+                        option.text = table.name;
                         tableSelect.appendChild(option);
                     });
                 });
         });
     </script>
 }
-

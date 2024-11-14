@@ -29,11 +29,11 @@ namespace BeanScene.Controllers
             }
 
             
-            var admin=await _userManager.FindByNameAsync("admin@BeanScene");
-            var resultAdmin=await _userManager.AddToRoleAsync(admin!,"Admin");
+            //var admin=await _userManager.FindByNameAsync("admin@BeanScene");
+            //var resultAdmin=await _userManager.AddToRoleAsync(admin!,"Admin");
 
-            var staff=await _userManager.FindByNameAsync("staff@BeanScene");
-            var resultStaff=await _userManager.AddToRoleAsync(staff!,"Staff");
+            //var staff=await _userManager.FindByNameAsync("staff@BeanScene");
+            // resultStaff=await _userManager.AddToRoleAsync(staff!,"Staff");
 
             return View();
         }
