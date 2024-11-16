@@ -71,3 +71,9 @@ h2, p {
 h3, h4, h5, h6 {
     color: var(--bean-mid-blue);
 }
+.menulist p {
+    text-align:center;
+}
+.left h2, .left p{
+    text-align:left;
+}
