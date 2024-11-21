@@ -1,0 +1,76 @@
+@model BeanScene.Models.Sitting
+
+@{
+    ViewData["Title"] = "Create Sitting";
+}
+
+<h1>Create Sitting</h1>
+
+<!-- Display Validation Summary -->
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+
+    <!-- Name -->
+    <div class="form-group">
+        <label asp-for="Name" class="control-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <!-- Start -->
+    <div class="form-group">
+        <label asp-for="Start" class="control-label"></label>
+        <input asp-for="Start" type="datetime-local" class="form-control" />
+        <span asp-validation-for="Start" class="text-danger"></span>
+    </div>
+
+    <!-- End -->
+    <div class="form-group">
+        <label asp-for="End" class="control-label"></label>
+        <input asp-for="End" type="datetime-local" class="form-control" />
+        <span asp-validation-for="End" class="text-danger"></span>
+    </div>
+
+    <!-- Capacity -->
+    <div class="form-group">
+        <label asp-for="Capacity" class="control-label"></label>
+        <input asp-for="Capacity" type="number" class="form-control" />
+        <span asp-validation-for="Capacity" class="text-danger"></span>
+    </div>
+
+    <!-- Restaurant Dropdown -->
+    <div class="form-group">
+        <label>Restaurant</label>
+        <select asp-for="RestaurantId" class="form-control">
+            <option value="">-- Select Restaurant --</option>
+            @foreach (var restaurant in ViewBag.Restaurants)
+            {
+                <option value="@restaurant.Id">@restaurant.Name</option>
+            }
+        </select>
+        <span asp-validation-for="RestaurantId" class="text-danger"></span>
+    </div>
+
+    <!-- Sitting Type Dropdown -->
+    <div class="form-group">
+        <label>Sitting Type</label>
+        <select asp-for="Type" class="form-control">
+            <option value="">-- Select Type --</option>
+            @foreach (var type in ViewBag.SittingTypes)
+            {
+                <option value="@((int)type)">@type</option>
+            }
+        </select>
+        <span asp-validation-for="Type" class="text-danger"></span>
+    </div>
+
+    <!-- Closed Checkbox -->
+    <div class="form-group">
+        <label asp-for="Closed" class="control-label"></label>
+        <input asp-for="Closed" type="checkbox" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>

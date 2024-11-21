@@ -2,13 +2,24 @@
 
 @{
     ViewData["Title"] = "Reservations";
+    var selectedDate = ViewBag.SelectedDate as DateTime?;
 }
-
 
 <h2>Reservations</h2>
 
-<a asp-action="Create" class="btn btn-success">Create New Reservation</a>
+<!-- Date Picker Form -->
+<form method="get" asp-action="Index" asp-controller="StaffArea">
+    <label for="date">Select Date:</label>
+    <input type="date" id="date" name="date" value="@selectedDate?.ToString("yyyy-MM-dd")" />
+    <button type="submit" class="btn btn-primary">View</button>
+</form>
 
+<!-- Create New Reservation Button -->
+<div class="mb-3">
+    <a asp-action="Search" class="btn btn-success">Create New Reservation</a>
+</div>
+
+<!-- Reservations Table -->
 <table class="table table-bordered table-striped">
     <thead>
         <tr>
@@ -18,36 +29,66 @@
             <th>Duration (minutes)</th>
             <th>Pax</th>
             <th>Notes</th>
-            <th>Statu</th>
+            <th>Status</th>
             <th>Sitting</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var reservation in Model)
+        @if (Model.Any())
+        {
+            @foreach (var reservation in Model)
+            {
+                <tr>
+                    <td>@reservation.Person?.Name</td>
+                    <td>@reservation.Start.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>
+                        @if (reservation.Tables.Any())
+                        {
+                            @foreach (var table in reservation.Tables)
+                            {
+                                <span>@table.Number</span><br />
+                            }
+                        }
+                        else
+                        {
+                            <span>No tables assigned</span>
+                        }
+                    </td>
+                    <td>@reservation.Duration</td>
+                    <td>@reservation.Pax</td>
+                    <td>@reservation.Notes</td>
+                    <td>
+                        <form method="post" asp-action="ToggleStatus" asp-controller="StaffArea" asp-route-id="@reservation.Id" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-link p-0">
+                                @reservation.ReservationStatus?.Name
+                            </button>
+                        </form>
+                    </td>
+                    <td>@reservation.Sitting?.Name</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@reservation.Id" class="btn btn-primary btn-sm">Details</a>
+                        <a asp-action="Delete" asp-route-id="@reservation.Id" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
         {
             <tr>
-                <td>@reservation.Person.Name</td>
-                <td>@reservation.Start.ToString("g")</td>
-                <td>
-                    <!-- List each table associated with this reservation -->
-                    @foreach (var table in reservation.Tables)
-                    {
-                        <span>@table.Number</span><br />
-                    }
-                </td>
-                <td>@reservation.Duration</td>
-                <td>@reservation.Pax</td>
-                <td>@reservation.Notes</td>
-                <td>@reservation.ReservationStatus.Name</td>
-                <td>@reservation.Sitting.Name</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@reservation.Id" class="btn btn-primary btn-sm">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@reservation.Id" class="btn btn-danger btn-sm">Delete</a>
-                </td>
+                <td colspan="9" class="text-center">No reservations found for the selected date.</td>
             </tr>
         }
     </tbody>
 </table>
 
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
 
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}

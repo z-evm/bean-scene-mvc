@@ -1,0 +1,58 @@
+@model Reservation
+
+<h2>Confirm Your Booking</h2>
+
+<p><strong>Selected Time:</strong> @Model.Start.ToString("yyyy-MM-d  HH:mm")</p>
+<p><strong>Guests:</strong> @Model.Pax</p>
+
+<form asp-action="Book" method="post">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" asp-for="SittingId" value="@ViewBag.SittingId" />
+    <input type="hidden" asp-for="Pax" value="@ViewBag.Guests" />
+    <input type="hidden" asp-for="Start" value="@ViewBag.SelectedTimeSlot.ToString("yyyy-MM-ddTHH:mm:ss")" />
+
+     <div class="form-group">
+    <label>Select Tables:</label>
+    <div>
+        @if (ViewBag.AvailableTables != null)
+        {
+            var availableTables = ViewBag.AvailableTables as List<RestaurantTable>;
+            foreach (var table in availableTables!)
+            {
+                <div class="form-check">
+                    <input type="checkbox" name="selectedTableIds" value="@table.Id" id="table_@table.Id" class="form-check-input" />
+                    <label class="form-check-label" for="table_@table.Id">
+                        Table @table.Number
+                    </label>
+                </div>
+            }
+        }
+        else
+        {
+            <p>No tables are available for the selected time slot.</p>
+        }
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <label asp-for="Person.Name">Name</label>
+        <input asp-for="Person.Name" class="form-control" />
+        <span asp-validation-for="Person.Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Person.Email">Email</label>
+        <input asp-for="Person.Email" class="form-control" />
+        <span asp-validation-for="Person.Email" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Person.Phone">Phone</label>
+        <input asp-for="Person.Phone" class="form-control" />
+        <span asp-validation-for="Person.Phone" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Confirm Booking</button>
+</form>

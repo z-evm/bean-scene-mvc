@@ -1,0 +1,41 @@
+﻿@model BeanScene.Models.Reservation
+
+<h2>Reservation Details</h2>
+
+<div class="card">
+    <div class="card-header">
+        Reservation Information
+    </div>
+    <div class="card-body">
+        <p><strong>Person Name:</strong> @Model.Person?.Name</p>
+        <p><strong>Person Email:</strong> @Model.Person?.Email</p>
+        <p><strong>Person Phone:</strong> @Model.Person?.Phone</p>
+        <p><strong>Start Time:</strong> @Model.Start.ToString("yyyy-MM-dd HH:mm")</p>
+        <p><strong>End Time:</strong> @Model.End?.ToString("yyyy-MM-dd HH:mm")</p>
+        <p><strong>Duration:</strong> @Model.Duration.ToString()</p>
+        <p><strong>Pax:</strong> @Model.Pax</p>
+        <p><strong>Status:</strong> @Model.ReservationStatus?.Name</p>
+        <p><strong>Sitting:</strong> @Model.Sitting?.Name</p>
+        <p><strong>Notes:</strong> @Model.Notes </p>
+    </div>
+</div>
+
+<h3>Assigned Tables</h3>
+@if (Model.Tables != null && Model.Tables.Any())
+{
+    <ul>
+        @foreach (var table in Model.Tables)
+        {
+            <li>Table Number: @table.Number</li>
+        }
+    </ul>
+}
+else
+{
+    <p>No tables assigned to this reservation.</p>
+}
+
+<div class="mt-3">
+    <a asp-action="EditSearch" asp-route-id="@ViewBag.ReservationId" class="btn btn-primary btn-sm">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to Reservations</a>
+</div>

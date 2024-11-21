@@ -1,0 +1,32 @@
+@model IEnumerable<BeanScene.Models.Reservation>
+
+<h2>Your Reservations</h2>
+
+@if (!Model.Any())
+{
+    <p>You have no reservations.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Reservation Date</th>
+                <th>Time</th>
+                <th>Guests</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var reservation in Model)
+            {
+                <tr>
+                    <td>@reservation.Start.ToString("yyyy-MM-dd")</td>
+                    <td>@reservation.Start.ToString("HH:mm")</td>
+                    <td>@reservation.Pax</td>
+                    <td>@reservation.Notes</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

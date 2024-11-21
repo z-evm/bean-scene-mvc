@@ -1,0 +1,66 @@
+@model BeanScene.Models.Sitting
+
+@{
+    ViewData["Title"] = "Edit Sitting";
+}
+
+<h1>Edit Sitting</h1>
+
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+
+    <!-- Hidden field for Sitting ID -->
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label for="restaurant">Select Restaurant</label>
+        <select id="restaurant" name="RestaurantId" class="form-control" required>
+            <option value="">-- Select a Restaurant --</option>
+            @foreach (var restaurant in (IEnumerable<Restaurant>)ViewBag.Restaurants)
+            {
+                <option value="@restaurant.Id" selected="@(restaurant.Id == Model.RestaurantId)">
+                    @restaurant.Name
+                </option>
+            }
+        </select>
+        <span asp-validation-for="RestaurantId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Start"></label>
+        <input asp-for="Start" type="datetime-local" class="form-control" />
+        <span asp-validation-for="Start" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="End"></label>
+        <input asp-for="End" type="datetime-local" class="form-control" />
+        <span asp-validation-for="End" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Capacity"></label>
+        <input asp-for="Capacity" type="number" class="form-control" />
+        <span asp-validation-for="Capacity" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Type"></label>
+        <select asp-for="Type" class="form-control" asp-items="Html.GetEnumSelectList<SittingType>()"></select>
+        <span asp-validation-for="Type" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Closed"></label>
+        <input asp-for="Closed" type="checkbox" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</form>

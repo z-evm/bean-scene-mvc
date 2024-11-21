@@ -1,0 +1,81 @@
+@{
+    ViewBag.Title = "Available Time Slots";
+    var timeSlots = ViewBag.TimeSlots as List<(DateTime SlotStart, bool IsAvailable)>;
+    int sittingId = ViewBag.SittingId ?? 0;
+    int guests = ViewBag.Guests ?? 0;
+}
+
+<h2>Available Time Slots</h2>
+
+@if (timeSlots != null && timeSlots.Any())
+{
+    <form method="get" action="@Url.Action("Book", "Reservation")">
+        @Html.AntiForgeryToken()
+
+        <!-- Include SittingId and Guests as hidden fields -->
+        <input type="hidden" name="sittingId" value="@sittingId" />
+        <input type="hidden" name="guests" value="@guests" />
+
+        <div class="time-slot-container">
+            @foreach (var slot in timeSlots)
+            {
+                <button 
+                    type="submit" 
+                    name="selectedTimeSlot" 
+                    value="@slot.SlotStart.ToString("yyyy-MM-ddTHH:mm:ss")" 
+                    class="time-slot-box @(slot.IsAvailable ? "available" : "unavailable")" 
+                    @(slot.IsAvailable ? "" : "disabled")>
+                    @slot.SlotStart.ToString("HH:mm")
+                </button>
+            }
+        </div>
+    </form>
+}
+else
+{
+    <p>No time slots available for the specified range.</p>
+}
+
+
+
+
+
+
+<style>
+    .time-slot-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .time-slot-box {
+        display: inline-block;
+        width: 80px;
+        height: 40px;
+        border: 1px solid #ccc;
+        background-color: #f8f9fa;
+        color: #333;
+        text-align: center;
+        line-height: 40px;
+        font-size: 14px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .time-slot-box.available {
+        background-color: #28a745;
+        color: white;
+        border: 1px solid #28a745;
+    }
+
+    .time-slot-box.unavailable {
+        background-color: #e0e0e0;
+        color: #999;
+        cursor: not-allowed;
+        border: 1px solid #ccc;
+    }
+
+    .time-slot-box:disabled {
+        pointer-events: none;
+    }
+</style>

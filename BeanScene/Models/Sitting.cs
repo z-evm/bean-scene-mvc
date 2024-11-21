@@ -25,6 +25,8 @@ public class Sitting
         public int Capacity { get; set; } // Dinner we have 40 people capacity 
         public bool Closed { get; set; }  // This  is marked as closed
 
+
+
         //navigation properties
         public int RestaurantId { get; set; }
         public Restaurant? Restaurant { get; set; }
@@ -33,6 +35,14 @@ public class Sitting
 
         public List<Reservation> Reservations { get; set; } = new();  //Sitting can be many reservation
 
-        
+       
+        public bool IsAvailable(DateTime start, DateTime end, int guests)
+        {
+            var isAvailable = Reservations.All(r => r.End <= start || r.Start >= end);
+            Console.WriteLine($"Sitting availability checked for {start} to {end} with {guests} guests. Available: {isAvailable}");
 
-    }
+            return Reservations.All(r => r.End <= start || r.Start >= end);
+        }
+
+        
+}

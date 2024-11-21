@@ -1,0 +1,57 @@
+@model IEnumerable<BeanScene.Models.Sitting>
+
+@{
+    ViewData["Title"] = "Sittings";
+    var selectedDate = ViewBag.SelectedDate as DateTime?;
+}
+
+<h2>Sittings</h2>
+
+<!-- Date Picker Form -->
+<form method="get" asp-action="Index" asp-controller="Sittings">
+    <label for="date">Select Date:</label>
+    <input type="date" id="date" name="date" value="@selectedDate?.ToString("yyyy-MM-dd")" />
+    <button type="submit" class="btn btn-primary">View</button>
+</form>
+
+<!-- Sittings Table -->
+@if (Model.Any())
+{
+    <table class="table table-bordered table-striped mt-3">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Restaurant</th>
+                <th>Capacity</th>
+                <th>Reservations</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var sitting in Model)
+            {
+                <tr>
+                    <td>@sitting.Name</td>
+                    <td>@sitting.Start.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@sitting.End.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@sitting.Restaurant?.Name</td>
+                    <td>@sitting.Capacity</td>
+                    <td>@sitting.Reservations.Count</td>
+                    <td>@(sitting.Closed ? "Closed" : "Open")</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@sitting.Id" class="btn btn-primary btn-sm">Edit</a>
+                        <a asp-action="Details" asp-route-id="@sitting.Id" class="btn btn-info btn-sm">Details</a>
+                        <a asp-action="Delete" asp-route-id="@sitting.Id" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No sittings available for the selected date.</p>
+}

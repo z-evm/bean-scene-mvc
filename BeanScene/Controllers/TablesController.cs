@@ -4,9 +4,6 @@ namespace BeanScene.Controllers
 {
     public class TablesController : Controller
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        
     }
 }

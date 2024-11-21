@@ -29,4 +29,4 @@ Staff:staff@BeanScene
 password:111111
 
 
-When you create user account for both of them  after that shut down programm and run again  and login.
+When you create user account for both of them  after  that  shut down programm and go to Controller/HomeController And  there has two comment do uncomment  and  run again  and login.

@@ -1,0 +1,42 @@
+@model BeanScene.Models.Reservation
+
+<h2>Confirm Your Booking</h2>
+
+<p><strong>Selected Time:</strong> @(Model?.Start.ToString("HH:mm") ?? "Not selected")</p>
+<p><strong>Guests:</strong> @(Model?.Pax ?? 0)</p>
+
+<form asp-action="Book" method="post">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" asp-for="SittingId" value="@ViewBag?.SittingId" />
+    <input type="hidden" asp-for="Pax" value="@ViewBag?.Guests" />
+    <input type="hidden" asp-for="Start" value="@ViewBag?.SelectedTimeSlot?.ToString("yyyy-MM-ddTHH:mm:ss")" />
+    <input type="hidden" asp-for="PersonId" value="@Model?.PersonId" />
+
+    <!-- User Information -->
+    <div class="form-group">
+        <label asp-for="Person.Name">Name</label>
+        <input asp-for="Person.Name" class="form-control" />
+        <span asp-validation-for="Person.Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Person.Email">Email</label>
+        <input asp-for="Person.Email" class="form-control" />
+        <span asp-validation-for="Person.Email" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Person.Phone">Phone Number</label>
+        <input asp-for="Person.Phone" class="form-control" />
+        <span asp-validation-for="Person.Phone" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Notes">Notes</label>
+        <textarea asp-for="Notes" class="form-control"></textarea>
+        <span asp-validation-for="Notes" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Confirm Booking</button>
+</form>

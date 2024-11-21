@@ -1,249 +1,173 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BeanScene.Data;
 using BeanScene.Models;
+using Microsoft.Extensions.Logging;
+using System.Diagnostics;
+using Microsoft.AspNetCore.Identity;
 
 namespace BeanScene.Controllers
 {
+
+
+
+
     public class ReservationController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<ReservationController> _logger;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public ReservationController(ApplicationDbContext context)
+
+        public ReservationController(ApplicationDbContext context, ILogger<ReservationController> logger, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _logger = logger;
+            _userManager = userManager;
         }
 
-        
-
-
-
-        // GET: Reservation/Index
-        public async Task<IActionResult> Index()
+        // Get /Reservation/Search
+        [HttpGet]
+        public IActionResult Search()
         {
-            var reservations = await _context.Reservations // fetch reservation data
-                .Include(r => r.Person) //get person 
-                .Include(r => r.Sitting)//get sitting time
-                .Include(r =>r.ReservationStatus) //get reservation status
-                .Include(r => r.Tables)// get reservation tables
-                .ToListAsync();
-            return View(reservations);
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //reservation create Working
-       // GET: Reservation/Create
-        public async Task<IActionResult>  Create()
-        {
-
-            // Fetch only upcoming sittings that are open and sort by start time
-                 ViewData["Sittings"] = await _context.Sittings
-                                         .Where(s => !s.Closed && s.Start >= DateTime.Now) // this turn
-                                         .OrderBy(s => s.Start)
-                                         .ToListAsync();
             return View();
         }
 
 
 
 
-        //reservation create Working
-        //post reservation
+
+        // Post /Reservation/Search
         [HttpPost]
-        [ValidateAntiForgeryToken] // create token
-        public async Task<IActionResult> Create( Reservation reservation)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Search(DateTime date, TimeSpan time, int guests) // get param form search screen  push to listOftimeslot screen
         {
-            
+            DateTime selectedTime = date.Date.Add(time); // set up request  time
+            DateTime rangeStart = selectedTime.AddHours(-1); //  reservation search start time , 
+            DateTime rangeEnd = selectedTime.AddHours(1); //reservation search end time , 
+
+            var sittings = await _context.Sittings 
+                .Include(s => s.Reservations)
+                .Where(s => s.Start <= rangeEnd && s.End >= rangeStart && !s.Closed)
+                .ToListAsync();
+
+            if (!sittings.Any())
+            {
+                ModelState.AddModelError("", "No sittings available within the specified range.");
+                return View("Search");
+            }
+
+            var timeSlots = new List<(DateTime SlotStart, bool IsAvailable)>();
+
+            foreach (var sitting in sittings)
+            {
+
+                DateTime currentTime = sitting.Start > rangeStart ? sitting.Start : rangeStart;  // get available time 
+                while (currentTime < sitting.End && currentTime < rangeEnd) 
+                {
+                    var overlappingReservations = sitting.Reservations?
+                        .Where(r => r.End > currentTime && r.Start < currentTime.AddMinutes(15)) ?? Enumerable.Empty<Reservation>();
+
+                    int totalReservedGuests = overlappingReservations.Sum(r => r.Pax);
+                    bool isAvailable = totalReservedGuests + guests <= sitting.Capacity;
+
+                    timeSlots.Add((currentTime, isAvailable));
+                    currentTime = currentTime.AddMinutes(15);
+                }
+            }
+
+            if (!timeSlots.Any())
+            {
+                ModelState.AddModelError("", "No time slots available within the specified range.");
+                return View("Search");
+            }
+
+            ViewBag.TimeSlots = timeSlots; 
+            ViewBag.Guests = guests;
+            ViewBag.SelectedDateTime = selectedTime;
+            ViewBag.SittingId = sittings.First().Id;
+
+            return View("TimeSlotList"); // to TimeSlotList
+        }
+
+
+
+        // GET: Reservation/Book
+        public async Task<IActionResult> Book(int sittingId, int guests, DateTime selectedTimeSlot)
+        {
+        Person? person = null; //get person
+
+        // Check if a user is logged in
+        var currentUser = await _userManager.GetUserAsync(User); // if it is login
+        if (currentUser != null)
+        {
+            // Find or create the associated Person
+            person = await _context.Persons.FirstOrDefaultAsync(p => p.UserId == currentUser.Id); // this assoite with person and user
+            if (person == null)
+            {
+                // Create a new Person object to prefill with logged-in user's details
+                person = new Person
+                {
+                    Name = currentUser.UserName ?? "",
+                    Email = currentUser.Email ?? "",
+                    Phone = currentUser.Email ??"" 
+                };
+
+                // Save the new Person in the database and associate it with the current user
+                person.UserId = currentUser.Id;
+                _context.Persons.Add(person);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        // Fetch the Sitting
+        var sitting = await _context.Sittings
+            .Include(s => s.Reservations)
+            .FirstOrDefaultAsync(s => s.Id == sittingId && !s.Closed);
+
+        if (sitting == null)
+        {
+            return NotFound("Sitting not available.");
+        }
+
+        // Populate ViewBag for Razor rendering
+        ViewBag.SittingId = sittingId;
+        ViewBag.Guests = guests;
+        ViewBag.SelectedTimeSlot = selectedTimeSlot;
+
+        // Return the reservation form
+        return View(new Reservation
+        {
+            Start = selectedTimeSlot,
+            Pax = guests,
+            Person = person! // Pre-fill for logged-in users, or null for guests
+        });
+    }
+
+
+
+
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Book(Reservation reservation)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(reservation);
+            }
 
             try
             {
-                if(ModelState.IsValid){
-
-                
-                // Find or create the person based on their email
-                var person = await _context.Persons.FirstOrDefaultAsync(p => p.Email!.ToLower() == reservation.Person.Email!.ToLower());  // check email
-                if (person == null)
-                {
-                    person = new Person  //create new person
-                    {
-                        Name = reservation.Person.Name,
-                        Email = reservation.Person.Email,
-                        Phone = reservation.Person.Phone
-                    };
-
-                    _context.Add(person);
-                    await _context.SaveChangesAsync();
-                }
-
-                // Assign person to reservation
-                reservation.PersonId = person.Id;
-
-                reservation.Person = null; // solved new user problem
-
-                
-
-                // Find the specified sitting and ensure it’s open
-                var sitting = await _context.Sittings
-                                            .Include(s => s.Reservations)
-                                            .FirstOrDefaultAsync(s => s.Id == reservation.SittingId);
-
-                if (sitting == null || sitting.Closed)
-                {
-                    ModelState.AddModelError("SittingId", "Selected sitting is not available.");  // if is not 
-                    ViewData["Sittings"] = await _context.Sittings.Where(s => !s.Closed).ToListAsync();
-                    return View(reservation);
-                }
-
-                reservation.End = reservation.Start.AddMinutes(reservation.Duration);
-
-
-                // Ensure the reservation is within the sitting's start and end times
-                if (reservation.Start < sitting.Start || reservation.End > sitting.End)
-                {
-                    ModelState.AddModelError("Start", "Reservation must fit within the sitting's start and end times.");
-                    ViewData["Sittings"] = await _context.Sittings.Where(s => !s.Closed && s.Start >= DateTime.Now).OrderBy(s => s.Start).ToListAsync();
-                    return View(reservation);
-                }
-
-
-
-                // Get a list of available tables for the selected time
-                var availableTables = await _context.RestaurantTables
-                                                    .Include(t => t.Reservations)
-                                                    .Where(t => t.Reservations.All(r => r.End <= reservation.Start || r.Start >= reservation.End))
-                                                    .ToListAsync();
-
-                if (!availableTables.Any())
-                {
-                    ModelState.AddModelError("", "No available table for the selected time.");
-                    ViewData["Sittings"] = await _context.Sittings.Where(s => !s.Closed).ToListAsync();
-                    return View(reservation);
-                }
-
-                // Randomly select a table from the list of available tables
-                var random = new Random();
-                var randomTable = availableTables[random.Next(availableTables.Count)];
-
-                // Assign table to reservation and complete setup
-                reservation.Tables.Add(randomTable);
-                _context.Add(reservation);
-
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index));
-                }
-            }
-            catch (Exception ex)
-            {
-                // Handle all exceptions in a single catch block
-                ModelState.AddModelError("", "An unexpected error occurred. Please try again.");
-                Console.WriteLine($"Unexpected error: {ex.Message}");
-                ViewData["Sittings"] = await _context.Sittings.Where(s => !s.Closed).ToListAsync();
-                
-            }
-            return View(reservation);
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // GET: Reservation/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            // Load the reservation along with related Person and Sitting entities
-            var reservation = await _context.Reservations
-                .Include(r => r.Person) // Make sure Person is loaded
-                .Include(r => r.Sitting) // Make sure Sitting is loaded
-                .Include(r =>r.Tables)
-                .FirstOrDefaultAsync(r => r.Id == id);
-
-            if (reservation == null)
-            {
-                return NotFound();
-            }
-
-            // Load sittings for the dropdown
-            ViewData["Sittings"] = await _context.Sittings
-                .Where(s => !s.Closed) // Filter for open sittings
-                .ToListAsync();
-
-            return View(reservation);
-        }
-
-
-
-
-
-    // POST: Reservation/Edit/1
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, Reservation reservation)
-    {
-        if (id != reservation.Id)
-        {
-            return BadRequest("Reservation ID mismatch.");
-        }
-
-        try
-        {
-            if (ModelState.IsValid)
-            {
-                // Retrieve the original reservation including the related person, sitting, and tables data
-                var originalReservation = await _context.Reservations
-                                                        .Include(r => r.Person)
-                                                        .Include(r => r.Sitting)
-                                                        .Include(r => r.Tables) // Corrected typo here
-                                                        .FirstOrDefaultAsync(r => r.Id == id);
-
-                if (originalReservation == null)
-                {
-                    return NotFound("Reservation not found.");
-                }
-
-                // Find or create the person based on their email
+                // Find or create the person based on the provided email
                 var person = await _context.Persons.FirstOrDefaultAsync(p => p.Email!.ToLower() == reservation.Person.Email!.ToLower());
                 if (person == null)
                 {
-                    // New person creation
                     person = new Person
                     {
                         Name = reservation.Person.Name,
@@ -253,116 +177,68 @@ namespace BeanScene.Controllers
                     _context.Add(person);
                     await _context.SaveChangesAsync();
                 }
-                else
-                {
-                    // Update person's details if they have changed
-                    person.Name = reservation.Person.Name;
-                    person.Phone = reservation.Person.Phone;
-                    _context.Update(person);
-                    await _context.SaveChangesAsync();
-                }
 
-                // Update the reservation's person ID
-                originalReservation.PersonId = person.Id;
+                reservation.PersonId = person.Id;
+                reservation.Person = null!;
 
-                // Calculate the end time of the reservation
-                reservation.End = reservation.Start.AddMinutes(reservation.Duration);
-
-                // Ensure reservation time is within the sitting's start and end times
+                // Validate sitting
                 var sitting = await _context.Sittings
-                                            .FirstOrDefaultAsync(s => s.Id == originalReservation.SittingId && !s.Closed);
-                if (sitting == null || reservation.Start < sitting.Start || reservation.End > sitting.End)
+                    .Include(s => s.Reservations)
+                    .FirstOrDefaultAsync(s => s.Id == reservation.SittingId);
+
+                if (sitting == null || sitting.Closed)
                 {
-                    ModelState.AddModelError("Start", "Reservation time must fit within the sitting's available time.");
-                    ViewData["Sittings"] = await _context.Sittings.Where(s => !s.Closed).ToListAsync();
+                    ModelState.AddModelError("", "Sitting not available.");
                     return View(reservation);
                 }
 
-                // Update reservation details
-                originalReservation.Start = reservation.Start;
-                originalReservation.End = reservation.End;
-                originalReservation.Duration = reservation.Duration;
+                // Validate capacity
+                var overlappingReservations = sitting.Reservations
+                    .Where(r => r.Start < reservation.End && r.End > reservation.Start);
+                var totalPax = overlappingReservations.Sum(r => r.Pax);
 
-                // Update the reservation
-                _context.Update(originalReservation);
+                if ((sitting.Capacity - totalPax) < reservation.Pax)
+                {
+                    ModelState.AddModelError("Pax", $"The maximum capacity for this sitting is {sitting.Capacity}. Only {sitting.Capacity - totalPax} spots are available.");
+                    return View(reservation);
+                }
+
+                // Calculate the end time of the reservation (2 hours from the start)
+                DateTime end = reservation.Start.AddHours(2);
+
+                // Fetch all available tables for the given time slot
+                var availableTables = await _context.RestaurantTables
+                    .Include(t => t.Reservations) // Include reservations for the availability check
+                    .Where(t => t.Reservations.All(r => r.End <= reservation.Start || r.Start >= end)) // No overlapping reservations
+                    .ToListAsync();
+
+                if (!availableTables.Any())
+                {
+                    ModelState.AddModelError("", "No tables available for the selected time.");
+                    return View(reservation);
+                }
+
+                // Select one table (random or best-fit) from the available tables
+                var random = new Random();
+                var assignedTable = availableTables[random.Next(availableTables.Count)];
+
+                // Assign the selected table to the reservation
+                reservation.Tables = new List<RestaurantTable> { assignedTable };
+
+
+                _context.Reservations.Add(reservation);
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "Home");
             }
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            // Handle concurrency issues
-            if (!_context.Reservations.Any(e => e.Id == reservation.Id))
+            catch (Exception ex)
             {
-                return NotFound("Reservation does not exist.");
+                _logger.LogError(ex, "Error booking reservation.");
+                ModelState.AddModelError("", "Unexpected error occurred.");
+                return View(reservation);
             }
-            else
-            {
-                throw;
-            }
-        }
-        catch (Exception ex)
-        {
-            // Log the exception and show a generic error message
-            Console.WriteLine($"Error updating reservation: {ex.Message}");
-            ModelState.AddModelError("", "An unexpected error occurred. Please try again.");
-        }
-
-        // Reload sittings in case of an error to repopulate dropdowns
-        ViewData["Sittings"] = await _context.Sittings.Where(s => !s.Closed).ToListAsync();
-        return View(reservation);
-    }
-    
-
-    
-
-
-
-
-
-
-
-
-
-
-            
-            // GET: Reservation/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)  // check reservation Id 
-            {
-                return NotFound();
-            }
-
-            var reservation = await _context.Reservations  // get reservation data 
-                .Include(r => r.Person)
-                .Include(r => r.Sitting)
-                .Include(r =>r.Tables) //table
-                .FirstOrDefaultAsync(m => m.Id == id); 
-
-            if (reservation == null)
-            {
-                return NotFound();
-            }
-
-            return View(reservation);
-        }
-
-
-        // POST: Reservation/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var reservation = await _context.Reservations.FindAsync(id); 
-            if (reservation != null)
-            {
-                _context.Reservations.Remove(reservation); //remove reservation data 
-                await _context.SaveChangesAsync(); // and save data 
-            }
-            return RedirectToAction(nameof(Index));
         }
 
     }
 }
+
