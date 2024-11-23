@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BeanScene.Areas.Admin.Controllers
 {
-   [Authorize(Roles ="Admin"),Area("Admin")] // give access with authorize
+   [Authorize(Roles ="Admin,Manager"),Area("Admin")] // give access with authorize
     public class SittingsController : Controller
     {
         private readonly ApplicationDbContext _context; // connect context

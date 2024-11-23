@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 
 namespace BeanScene.Areas.Admin.Controllers;
-[Authorize(Roles ="Admin"),Area("Admin")]
+[Authorize(Roles ="Admin,Manager"),Area("Admin")]
 public class HomeController : Controller
     {
         public IActionResult Index()

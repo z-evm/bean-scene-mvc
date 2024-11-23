@@ -24,11 +24,14 @@ namespace BeanScene.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            foreach (string r in new[] {"Admin","Staff"}){
+            foreach (string r in new[] {"Manager","Admin","Staff","Member"}){
                 if(!await _roleManager.RoleExistsAsync(r)){
                     await _roleManager.CreateAsync(new IdentityRole(r));
                 }
             }
+
+            //var manager=await _userManager.FindByNameAsync("manager@BeanScene");
+            //var resultAdmin=await _userManager.AddToRoleAsync(manager!,"manager");
 
             
             //var admin=await _userManager.FindByNameAsync("admin@BeanScene");
@@ -58,54 +61,65 @@ namespace BeanScene.Controllers
 
 
 
-        public async Task<IActionResult> EnsurePersonAssociation()
+       public async Task<IActionResult> EnsurePersonAssociation()
+{
+    // Get the logged-in user's email
+    var userEmail = User.Identity!.Name; // The logged-in user's email
+    if (userEmail == null)
+    {
+        return Unauthorized(); // Ensure the user is authenticated
+    }
+
+    // Retrieve the logged-in user from Identity
+    var user = await _userManager.FindByEmailAsync(userEmail);
+    if (user == null)
+    {
+        return NotFound("User not found.");
+    }
+
+    // Check if the user has any roles
+    var userRoles = await _userManager.GetRolesAsync(user);
+    if (userRoles.Count == 0)
+    {
+        // If the user has no roles, assign the "Member" role
+        var roleResult = await _userManager.AddToRoleAsync(user, "Member");
+        if (!roleResult.Succeeded)
         {
-            // Get the logged-in user's email
-            var userEmail = User.Identity!.Name; // The logged-in user's email
-            if (userEmail == null)
-            {
-                return Unauthorized(); // Ensure the user is authenticated
-            }
-
-            // Retrieve the logged-in user from Identity
-            var user = await _userManager.FindByEmailAsync(userEmail);
-            if (user == null)
-            {
-                return NotFound("User not found.");
-            }
-
-            // Perform case-insensitive comparison for Person's email
-            var person = _context.Persons
-            .AsEnumerable() // Convert to in-memory for case-insensitive comparison
-            .FirstOrDefault(p => string.Equals(p.Email, userEmail, StringComparison.OrdinalIgnoreCase));
-
-
-            if (person != null)
-            {
-                // Associate the IdentityUser with the Person if not already associated
-                if (string.IsNullOrEmpty(person.UserId))
-                {
-                    person.UserId = user.Id; // Set the UserId foreign key
-                    _context.Persons.Update(person);
-                    await _context.SaveChangesAsync();
-                }
-            }
-            else
-            {
-                // Optionally, create a new Person record if none exists
-                person = new Person
-                {
-                    Name = user.UserName, // You may need to customize this
-                    Email = userEmail,
-                    UserId = user.Id // Associate with the logged-in user
-                };
-
-                _context.Persons.Add(person);
-                await _context.SaveChangesAsync();
-            }
-
-            return Ok(); // Or redirect to an appropriate action
+            return BadRequest("Failed to assign 'Member' role.");
         }
+    }
+
+    // Perform case-insensitive comparison for Person's email
+    var person = _context.Persons
+        .AsEnumerable() // Convert to in-memory for case-insensitive comparison
+        .FirstOrDefault(p => string.Equals(p.Email, userEmail, StringComparison.OrdinalIgnoreCase));
+
+    if (person != null)
+    {
+        // Associate the IdentityUser with the Person if not already associated
+        if (string.IsNullOrEmpty(person.UserId))
+        {
+            person.UserId = user.Id; // Set the UserId foreign key
+            _context.Persons.Update(person);
+            await _context.SaveChangesAsync();
+        }
+    }
+    else
+    {
+        // Optionally, create a new Person record if none exists
+        person = new Person
+        {
+            Name = user.UserName, // You may need to customize this
+            Email = userEmail,
+            UserId = user.Id // Associate with the logged-in user
+        };
+
+        _context.Persons.Add(person);
+        await _context.SaveChangesAsync();
+    }
+
+    return Ok(); // Or redirect to an appropriate action
+}
 
         
     }
