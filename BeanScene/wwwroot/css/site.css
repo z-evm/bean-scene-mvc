@@ -77,3 +77,30 @@ h3, h4, h5, h6 {
 .left h2, .left p{
     text-align:left;
 }
+
+footer {
+    color: #6c757d; /* Optional: muted text color */
+    padding: 20px 0;
+    text-align: center; 
+    border-top: 1px solid #dee2e6;
+    font-size: 14px; 
+}
+
+/* Define the custom property and style the button */
+.searchButton {
+    --bean-light-blue: #4AA1B5; /* Define the custom property */
+    background-color: var(--bean-light-blue); /* Use the custom property */
+    color: white; /* Text color */
+    border: none; /* Remove border */
+    padding: 10px 15px; /* Add padding for size */
+    font-size: 16px; /* Adjust font size */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Change cursor on hover */
+    transition: background-color 0.3s ease; /* Smooth hover transition */
+}
+
+/* Hover effect */
+.searchButton:hover {
+    background-color: #3a8a99; /* Slightly darker blue on hover */
+}
+

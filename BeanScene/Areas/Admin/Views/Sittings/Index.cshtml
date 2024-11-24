@@ -5,53 +5,85 @@
     var selectedDate = ViewBag.SelectedDate as DateTime?;
 }
 
-<h2>Sittings</h2>
+<div class="container mt-5">
+    <h2 class="text-center text-primary mb-4">Sittings</h2>
 
-<!-- Date Picker Form -->
-<form method="get" asp-action="Index" asp-controller="Sittings">
-    <label for="date">Select Date:</label>
-    <input type="date" id="date" name="date" value="@selectedDate?.ToString("yyyy-MM-dd")" />
-    <button type="submit" class="btn btn-primary">View</button>
-</form>
+    <!-- Date Picker Form -->
+    <form method="get" asp-action="Index" asp-controller="Sittings" class="d-flex justify-content-center mb-4">
+        <label for="date" class="me-2 align-self-center fw-bold">Select Date:</label>
+        <input type="date" id="date" name="date" value="@selectedDate?.ToString("yyyy-MM-dd")" class="form-control w-25 me-2" />
+        <button type="submit" class="btn " style="background-color: #4AA1B5;">View</button>
+    </form>
 
-<!-- Sittings Table -->
-@if (Model.Any())
-{
-    <table class="table table-bordered table-striped mt-3">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Start Time</th>
-                <th>End Time</th>
-                <th>Restaurant</th>
-                <th>Capacity</th>
-                <th>Reservations</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var sitting in Model)
-            {
+    <!-- Sittings Table -->
+    @if (Model.Any())
+    {
+        <table class="table table-bordered table-hover shadow">
+             <thead class="table-primary">
                 <tr>
-                    <td>@sitting.Name</td>
-                    <td>@sitting.Start.ToString("yyyy-MM-dd HH:mm")</td>
-                    <td>@sitting.End.ToString("yyyy-MM-dd HH:mm")</td>
-                    <td>@sitting.Restaurant?.Name</td>
-                    <td>@sitting.Capacity</td>
-                    <td>@sitting.Reservations.Count</td>
-                    <td>@(sitting.Closed ? "Closed" : "Open")</td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@sitting.Id" class="btn btn-primary btn-sm">Edit</a>
-                        <a asp-action="Details" asp-route-id="@sitting.Id" class="btn btn-info btn-sm">Details</a>
-                        <a asp-action="Delete" asp-route-id="@sitting.Id" class="btn btn-danger btn-sm">Delete</a>
-                    </td>
+                    <th>Name</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Restaurant</th>
+                    <th>Capacity</th>
+                    <th>Reservations</th>
+                    <th>Status</th>
+                    <th>Actions</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-}
-else
-{
-    <p>No sittings available for the selected date.</p>
-}
+            </thead>
+            <tbody>
+                @foreach (var sitting in Model)
+                {
+                    <tr>
+                        <td>@sitting.Name</td>
+                        <td>@sitting.Start.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>@sitting.End.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>@sitting.Restaurant?.Name</td>
+                        <td>@sitting.Capacity</td>
+                        <td>@sitting.Reservations.Count</td>
+                        <td>
+                            @if (sitting.Closed)
+                            {
+                                <span class="badge bg-danger">Closed</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">Open</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a asp-action="Edit" asp-route-id="@sitting.Id" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </a>
+                                <a asp-action="Details" asp-route-id="@sitting.Id" class="btn btn-sm btn-outline-info">
+                                    <i class="bi bi-info-circle"></i> Details
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@sitting.Id" class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-trash"></i> Delete
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p class="text-center text-muted">No sittings available for the selected date.</p>
+    }
+</div>
+
+<!-- Additional CSS for Styling -->
+<style>
+    .table-hover tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+    .btn-group .btn {
+        margin-right: 5px;
+    }
+    .badge {
+        font-size: 0.9rem;
+    }
+</style>

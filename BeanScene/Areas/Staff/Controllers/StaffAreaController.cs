@@ -63,54 +63,60 @@ public async Task<IActionResult> ToggleStatus(int id)
         return NotFound("Reservation not found.");
     }
 
-    if (reservation.Start > DateTime.Now)
-    {
-        TempData["ErrorMessage"] = "Cannot change the status of a reservation that has not started.";
-        return RedirectToAction("Index", new { date = reservation.Start.Date });
-    }
-
-
     // Define constants for ReservationStatus IDs
-    const int PendingStatusId = 1;
-    const int ConfirmedStatusId = 2;
-    const int SeatedStatusId = 3;
-    const int FinishedStatusId = 4;
+    const int PendingStatusId = 1;  // Example: Pending
+    const int ConfirmedStatusId = 2;  // Example: Approved
+    const int SeatedStatusId = 3;  // Example: Seated
+    const int FinishedStatusId = 4;  // Example: Finished
 
-    // Cycle through statuses using ReservationStatus.Id
+    // Handle status changes based on the current status
     switch (reservation.ReservationStatusId)
     {
         case PendingStatusId:
+            // Allow changing to Approved anytime
             reservation.ReservationStatusId = ConfirmedStatusId;
             break;
 
         case ConfirmedStatusId:
+            // Allow changing to Seated only if Start time has passed
+            if (reservation.Start > DateTime.Now)
+            {
+                TempData["ErrorMessage"] = "Cannot mark as Seated before the reservation start time.";
+                return RedirectToAction("Index", new { date = reservation.Start.Date });
+            }
             reservation.ReservationStatusId = SeatedStatusId;
             break;
 
         case SeatedStatusId:
+            // Allow changing to Finished only if Start time has passed
+            if (reservation.Start > DateTime.Now)
+            {
+                TempData["ErrorMessage"] = "Cannot mark as Finished before the reservation start time.";
+                return RedirectToAction("Index", new { date = reservation.Start.Date });
+            }
             reservation.ReservationStatusId = FinishedStatusId;
 
-            // Calculate duration and set end time when the status changes to Finished
+            // Set the End time and calculate the duration
             reservation.End = DateTime.Now;
-
             if (reservation.Start != null && reservation.End != null)
             {
-                reservation.Duration = (int)(reservation.End.Value - reservation.Start).TotalMinutes; // Save duration in minutes
+                reservation.Duration = (int)(reservation.End.Value - reservation.Start).TotalMinutes; // Duration in minutes
             }
             break;
 
         default:
-            reservation.ReservationStatusId = PendingStatusId; // Reset to Pending for any unexpected value
-            break;
+            TempData["ErrorMessage"] = "Invalid reservation status transition.";
+            return RedirectToAction("Index", new { date = reservation.Start.Date });
     }
 
-
+    // Update the reservation status
     _context.Update(reservation);
     await _context.SaveChangesAsync();
 
     TempData["SuccessMessage"] = "Reservation status updated successfully.";
     return RedirectToAction("Index", new { date = reservation.Start.Date });
 }
+
 
 
 
@@ -215,43 +221,48 @@ public async Task<IActionResult> Details(int id)
 
 
 
+// GET
+public async Task<IActionResult> Book(int sittingId, int guests, DateTime selectedTimeSlot)
+{
+    // Fetch all sittings that could match the selected time
+    var sittings = await _context.Sittings
+        .Include(s => s.Reservations)
+        .Where(s => !s.Closed && s.Start <= selectedTimeSlot && s.End >= selectedTimeSlot)
+        .ToListAsync();
 
-        //get
-        public async Task<IActionResult> Book(int sittingId, int guests, DateTime selectedTimeSlot)
-        {
+    // Find the sitting matching the time slot
+    var sitting = sittings.FirstOrDefault(s => s.Id == sittingId) ?? sittings.FirstOrDefault();
 
+    if (sitting == null)
+    {
+        TempData["ErrorMessage"] = "No suitable sitting available for the selected time.";
+        return RedirectToAction("Index"); // Redirect to an appropriate view
+    }
 
+    // Calculate the reservation's time range
+    var reservationEndTime = selectedTimeSlot.AddMinutes(120); // Default reservation duration is 2 hours
 
-            var sitting = await _context.Sittings
-                .Include(s => s.Reservations)
-                .FirstOrDefaultAsync(s => s.Id == sittingId && !s.Closed);
+    // Fetch tables that are available for the entire reservation duration
+    var availableTables = await _context.RestaurantTables
+        .Include(t => t.Reservations)
+        .Where(t => t.Reservations.All(r =>
+            r.End <= selectedTimeSlot || r.Start >= reservationEndTime)) // Check no overlapping reservations
+        .ToListAsync();
 
-            if (sitting == null)
-            {
-                return NotFound("Sitting not available.");
-            }
+    // Update ViewBag values for the sitting and other details
+    ViewBag.SittingId = sitting.Id; // Update sittingId dynamically
+    ViewBag.Guests = guests;
+    ViewBag.SelectedTimeSlot = selectedTimeSlot;
+    ViewBag.AvailableTables = availableTables;
 
-            // Calculate the reservation's time range
-            var reservationEndTime = selectedTimeSlot.AddMinutes(120); // Default reservation duration is 2 hours
+    return View(new Reservation
+    {
+        Start = selectedTimeSlot,
+        Pax = guests,
+        Sitting = sitting
+    });
+}
 
-            // Fetch tables that are available for the entire reservation duration
-            var availableTables = await _context.RestaurantTables
-                .Include(t => t.Reservations)
-                .Where(t => t.Reservations.All(r =>
-                    r.End <= selectedTimeSlot || r.Start >= reservationEndTime)) // Check no overlapping reservations
-                .ToListAsync();
-
-            ViewBag.SittingId = sittingId;
-            ViewBag.Guests = guests;
-            ViewBag.SelectedTimeSlot = selectedTimeSlot;
-            ViewBag.AvailableTables = availableTables;
-
-            return View(new Reservation
-            {
-                Start = selectedTimeSlot,
-                Pax = guests
-            });
-        }
 
 
 

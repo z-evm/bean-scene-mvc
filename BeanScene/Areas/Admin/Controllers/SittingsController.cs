@@ -28,22 +28,38 @@ namespace BeanScene.Areas.Admin.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> Index(DateTime? date)
+public async Task<IActionResult> Index(DateTime? date)
+{
+    var selectedDate = date?.Date ?? DateTime.Today;
+    var nextDay = selectedDate.AddDays(1);
+
+    // Fetch all sittings for the selected date
+    var sittings = await _context.Sittings
+        .Include(s => s.Restaurant)
+        .Include(s => s.Reservations)
+        .Where(s => s.Start >= selectedDate && s.Start < nextDay)
+        .OrderBy(s => s.Start)
+        .ToListAsync();
+
+    // Close sittings where the End time is less than the current time
+    var currentTime = DateTime.Now;
+    foreach (var sitting in sittings)
+    {
+        if (sitting.End < currentTime && !sitting.Closed)
         {
-            var selectedDate = date?.Date ?? DateTime.Today;
-            var nextDay = selectedDate.AddDays(1);
-
-            var sittings = await _context.Sittings
-                .Include(s => s.Restaurant)
-                .Include(s => s.Reservations)
-                .Where(s => s.Start >= selectedDate && s.Start < nextDay)
-                .OrderBy(s => s.Start)
-                .ToListAsync();
-
-            ViewBag.SelectedDate = selectedDate;
-
-            return View(sittings);
+            sitting.Closed = true; // Mark as closed
+            _context.Update(sitting); // Update the database
         }
+    }
+
+    // Save changes to the database if any sittings were updated
+    await _context.SaveChangesAsync();
+
+    ViewBag.SelectedDate = selectedDate;
+
+    return View(sittings);
+}
+
 
 
 

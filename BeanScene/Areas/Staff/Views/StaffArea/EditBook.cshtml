@@ -1,79 +1,208 @@
 @model Reservation
 
-<h2>Edit Your Booking</h2>
+<div class="container mt-5">
+    <div class="col-md-8 mx-auto">
+        <!-- Header Section -->
+        <h2 class="text-center text-primary mb-4">Edit Your Booking</h2>
 
-<p><strong>Selected Time:</strong> @Model.Start.ToString("yyyy-MM-dd HH:mm")</p>
-<p><strong>Guests:</strong> @Model.Pax</p>
 
-<form asp-action="EditBook" method="post">
-    @Html.AntiForgeryToken()
+        <form asp-action="EditBook" method="post" class="p-4 shadow rounded bg-light">
+            @Html.AntiForgeryToken()
 
-    <input type="hidden" asp-for="Id" />
-    <input type="hidden" asp-for="SittingId" value="@ViewBag.SittingId" />
-    <input type="hidden" asp-for="Pax" value="@ViewBag.Guests" />
-    <input type="hidden" asp-for="Start" value="@ViewBag.SelectedTimeSlot.ToString("yyyy-MM-ddTHH:mm:ss")" />
+            <!-- Hidden Fields -->
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="SittingId" value="@ViewBag.SittingId" />
+            <input type="hidden" asp-for="Pax" value="@ViewBag.Guests" />
+            <input type="hidden" asp-for="Start" value="@ViewBag.SelectedTimeSlot.ToString("yyyy-MM-ddTHH:mm:ss")" />
 
-    <div class="form-group">
-        <label>Select Tables:</label>
-        <div>
-            @{
-                var availableTables = ViewBag.AvailableTables as List<RestaurantTable>;
-            }
-            @if (availableTables != null && availableTables.Any())
-            {
-                foreach (var table in availableTables)
-                {
-                    <div class="form-check">
-                        <input type="checkbox" name="selectedTableIds" value="@table.Id" id="table_@table.Id" 
-                               class="form-check-input"
-                               @(Model.Tables.Any(t => t.Id == table.Id) ? "checked" : "") />
-                        <label class="form-check-label" for="table_@table.Id">
-                            Table @table.Number
-                        </label>
-                    </div>
-                }
-            }
-            else
-            {
-                <p>No tables are available for the selected time slot.</p>
-            }
+            <!-- Select Tables -->
+            <div class="form-group mb-4">
+                <label class="form-label fw-bold">Select Tables:</label>
+                <div class="table-grid border p-3 rounded bg-white">
+                    @{
+                        var availableTables = ViewBag.AvailableTables as List<RestaurantTable>;
+                    }
+                    @if (availableTables != null && availableTables.Any())
+                    {
+                        foreach (var table in availableTables)
+                        {
+                            <div class="form-check table-box">
+                                <input 
+                                    type="checkbox" 
+                                    name="selectedTableIds" 
+                                    value="@table.Id" 
+                                    id="table_@table.Id" 
+                                    class="form-check-input table-checkbox"
+                                    @(Model.Tables.Any(t => t.Id == table.Id) ? "checked" : "") />
+                                <label class="form-check-label" for="table_@table.Id">Table @table.Number</label>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-danger text-center">No tables are available for the selected time slot.</p>
+                    }
+                </div>
+            </div>
+
+            <!-- User Information -->
+            <div class="form-group mb-3">
+                <label asp-for="Person.Name" class="form-label fw-bold">Name</label>
+                <input asp-for="Person.Name" class="form-control form-control-lg" placeholder="Enter your name" />
+                <span asp-validation-for="Person.Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Person.Email" class="form-label fw-bold">Email</label>
+                <input asp-for="Person.Email" class="form-control form-control-lg" placeholder="Enter your email" />
+                <span asp-validation-for="Person.Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Person.Phone" class="form-label fw-bold">Phone</label>
+                <input asp-for="Person.Phone" class="form-control form-control-lg" placeholder="Enter your phone number" />
+                <span asp-validation-for="Person.Phone" class="text-danger"></span>
+            </div>
+
+            <!-- Additional Notes -->
+            <div class="form-group mb-4">
+                <label asp-for="Notes" class="form-label fw-bold">Additional Notes</label>
+                <textarea asp-for="Notes" class="form-control form-control-lg" rows="4" placeholder="Add any special requests or additional information."></textarea>
+                <span asp-validation-for="Notes" class="text-danger"></span>
+            </div>
+
+
+        <!-- Booking Details Card -->
+        <div class="card shadow-sm rounded mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Booking Details</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Selected Time:</strong> @Model.Start.ToString("yyyy-MM-dd HH:mm")</p>
+                <p><strong>Guests:</strong> @Model.Pax</p>
+            </div>
         </div>
+
+            <!-- Success or Error Messages -->
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success mt-3">@TempData["SuccessMessage"]</div>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger mt-3">@TempData["ErrorMessage"]</div>
+            }
+
+            <!-- Submit Button -->
+            <div class="d-flex justify-content-between mt-4">
+                <button type="submit" class="btn btn-success btn-lg">
+                    <i class="bi bi-check-circle"></i> Update Booking
+                </button>
+                <a asp-action="Index" class="btn btn-secondary btn-lg">
+                    <i class="bi bi-x-circle"></i> Cancel
+                </a>
+            </div>
+        </form>
     </div>
+</div>
 
-    <div class="form-group">
-        <label asp-for="Person.Name">Name</label>
-        <input asp-for="Person.Name" class="form-control" />
-        <span asp-validation-for="Person.Name" class="text-danger"></span>
-    </div>
+<!-- Styling -->
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
 
-    <div class="form-group">
-        <label asp-for="Person.Email">Email</label>
-        <input asp-for="Person.Email" class="form-control" />
-        <span asp-validation-for="Person.Email" class="text-danger"></span>
-    </div>
+    h2 {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #343a40;
+    }
 
-    <div class="form-group">
-        <label asp-for="Person.Phone">Phone</label>
-        <input asp-for="Person.Phone" class="form-control" />
-        <span asp-validation-for="Person.Phone" class="text-danger"></span>
-    </div>
+    .card {
+        border-radius: 8px;
+    }
 
-     <div class="form-group">
-        <label asp-for="Notes">Additional Notes</label>
-        <textarea asp-for="Notes" class="form-control" rows="4">@Model.Notes</textarea>
-        <span asp-validation-for="Notes" class="text-danger"></span>
-    </div>
+    .card-header {
+        font-size: 1.25rem;
+        font-weight: bold;
+    }
 
+    .form-label {
+        font-size: 1rem;
+        font-weight: bold;
+        color: #495057;
+    }
 
-    <button type="submit" class="btn btn-success">Update Booking</button>
-</form>
+    .form-control {
+        font-size: 1.1rem;
+        padding: 10px;
+        border-radius: 5px;
+    }
 
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-}
+    .form-control::placeholder {
+        font-size: 0.95rem;
+        color: #6c757d;
+    }
 
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
-}
+    .form-check {
+        margin-bottom: 10px;
+    }
+
+    .table-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 15px;
+        margin-top: 10px;
+    }
+
+    .table-box {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        text-align: center;
+        transition: transform 0.2s, box-shadow 0.2s;
+        cursor: pointer;
+    }
+
+    .table-box:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        transform: scale(1.05);
+    }
+
+    .btn-lg {
+        font-size: 1.25rem;
+        padding: 10px 20px;
+    }
+
+    .btn-success {
+        background-color: #083944;
+        border: none;
+        font-size: 1.2rem;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-success:hover {
+        background-color: #4AA1B5;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+
+    .btn-secondary:hover {
+        background-color: #545b62;
+        border-color: #4e555b;
+    }
+
+    .alert {
+        font-size: 1rem;
+        border-radius: 5px;
+    }
+</style>

@@ -4,13 +4,20 @@
     ViewData["Title"] = "Edit Sitting";
 }
 
-<h1>Edit Sitting</h1>
+<div class="container mt-5">
+    <h1 class="text-center  mb-4" style="color: #378a97;">Edit Sitting</h1>
 
-<form asp-action="Edit" method="post">
-    @Html.AntiForgeryToken()
+    <!-- Form Card -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form asp-action="Edit" method="post" class="needs-validation">
+                @Html.AntiForgeryToken()
 
-    <!-- Hidden field for Sitting ID -->
-    <input type="hidden" asp-for="Id" />
+                <!-- Hidden field for Sitting ID -->
+                <input type="hidden" asp-for="Id" />
+
+                <!-- General Information Section -->
+                <h4 class="mb-3">General Information</h4>
 
     <div class="form-group">
         <label for="restaurant">Select Restaurant</label>
@@ -26,41 +33,117 @@
         <span asp-validation-for="RestaurantId" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
-        <label asp-for="Name"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
-    </div>
+      <!-- Sitting Name -->
+                <div class="form-group mb-3">
+                    <label asp-for="Name" class="form-label fw-bold">Sitting Name</label>
+                    <input asp-for="Name" class="form-control" placeholder="Enter sitting name" required />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
 
-    <div class="form-group">
-        <label asp-for="Start"></label>
-        <input asp-for="Start" type="datetime-local" class="form-control" />
-        <span asp-validation-for="Start" class="text-danger"></span>
-    </div>
+                <!-- Time Details Section -->
+                <h4 class="mb-3">Time Details</h4>
 
-    <div class="form-group">
-        <label asp-for="End"></label>
-        <input asp-for="End" type="datetime-local" class="form-control" />
-        <span asp-validation-for="End" class="text-danger"></span>
-    </div>
+                <!-- Start Time -->
+                <div class="form-group mb-3">
+                    <label asp-for="Start" class="form-label fw-bold">Start Time</label>
+                    <input asp-for="Start" type="datetime-local" class="form-control" required />
+                    <span asp-validation-for="Start" class="text-danger"></span>
+                </div>
 
-    <div class="form-group">
-        <label asp-for="Capacity"></label>
-        <input asp-for="Capacity" type="number" class="form-control" />
-        <span asp-validation-for="Capacity" class="text-danger"></span>
-    </div>
+                <!-- End Time -->
+                <div class="form-group mb-3">
+                    <label asp-for="End" class="form-label fw-bold">End Time</label>
+                    <input asp-for="End" type="datetime-local" class="form-control" required />
+                    <span asp-validation-for="End" class="text-danger"></span>
+                </div>
 
-    <div class="form-group">
-        <label asp-for="Type"></label>
-        <select asp-for="Type" class="form-control" asp-items="Html.GetEnumSelectList<SittingType>()"></select>
-        <span asp-validation-for="Type" class="text-danger"></span>
-    </div>
+                <!-- Capacity -->
+                <div class="form-group mb-3">
+                    <label asp-for="Capacity" class="form-label fw-bold">Capacity</label>
+                    <input asp-for="Capacity" type="number" class="form-control" min="1" placeholder="Enter maximum capacity" required />
+                    <span asp-validation-for="Capacity" class="text-danger"></span>
+                </div>
 
-    <div class="form-group">
-        <label asp-for="Closed"></label>
-        <input asp-for="Closed" type="checkbox" />
-    </div>
+                <!-- Sitting Type -->
+                <div class="form-group mb-3">
+                    <label asp-for="Type" class="form-label fw-bold">Sitting Type</label>
+                    <select asp-for="Type" class="form-control" asp-items="Html.GetEnumSelectList<SittingType>()"></select>
+                    <span asp-validation-for="Type" class="text-danger"></span>
+                </div>
 
-    <button type="submit" class="btn btn-primary">Save Changes</button>
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-</form>
+                <!-- Closed Checkbox -->
+                <div class="form-check mb-4">
+                    <input asp-for="Closed" type="checkbox" class="form-check-input" id="closedCheckbox" />
+                    <label asp-for="Closed" class="form-check-label" for="closedCheckbox">Closed</label>
+                </div>
+
+                <!-- Buttons -->
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-lg btn-custom">
+                        <i class="bi bi-save"></i> Save Changes
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary btn-lg">
+                        <i class="bi bi-arrow-left"></i> Back to List
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Styling -->
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    h1 {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #4AA1B5;
+    }
+
+    .form-label {
+        font-weight: bold;
+        color: #495057;
+    }
+
+    .form-control {
+        font-size: 1rem;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    .btn-lg {
+        font-size: 1.25rem;
+        padding: 10px 20px;
+    }
+
+    .btn-primary i,
+    .btn-secondary i {
+        margin-right: 5px;
+    }
+
+    .card {
+        border-radius: 10px;
+        border: 1px solid #dee2e6;
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    .text-danger {
+        font-size: 0.9rem;
+    }
+    .btn-custom {
+        background-color: #4AA1B5;
+        border-color: #4AA1B5;
+        color: white; /* Optional: Ensures text is readable */
+    }
+
+    .btn-custom:hover {
+        background-color: #378a97; /* Slightly darker on hover */
+        border-color: #378a97;
+    }
+</style>

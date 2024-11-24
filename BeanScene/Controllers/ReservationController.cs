@@ -229,7 +229,9 @@ namespace BeanScene.Controllers
                 _context.Reservations.Add(reservation);
                 await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index", "Home");
+
+                return RedirectToAction("Index", "Home"); // This line is unreachable.
+
             }
             catch (Exception ex)
             {

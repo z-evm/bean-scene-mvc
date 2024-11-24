@@ -4,73 +4,107 @@
     ViewData["Title"] = "Create Sitting";
 }
 
-<h1>Create Sitting</h1>
+<div class="container mt-5">
+    <h1 class="text-center text-primary mb-4">Create Sitting</h1>
 
-<!-- Display Validation Summary -->
-<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <!-- Display Validation Summary -->
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
-<form asp-action="Create" method="post">
-    @Html.AntiForgeryToken()
+    <form asp-action="Create" method="post" class="p-4 border rounded shadow-sm bg-light">
+        @Html.AntiForgeryToken()
 
-    <!-- Name -->
-    <div class="form-group">
-        <label asp-for="Name" class="control-label"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
-    </div>
+        <!-- Name -->
+        <div class="form-group mb-3">
+            <label asp-for="Name" class="form-label">Sitting Name</label>
+            <input asp-for="Name" class="form-control" placeholder="Enter sitting name" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
 
-    <!-- Start -->
-    <div class="form-group">
-        <label asp-for="Start" class="control-label"></label>
-        <input asp-for="Start" type="datetime-local" class="form-control" />
-        <span asp-validation-for="Start" class="text-danger"></span>
-    </div>
+        <!-- Start -->
+        <div class="form-group mb-3">
+            <label asp-for="Start" class="form-label">Start Time</label>
+            <input asp-for="Start" type="datetime-local" class="form-control" />
+            <span asp-validation-for="Start" class="text-danger"></span>
+        </div>
 
-    <!-- End -->
-    <div class="form-group">
-        <label asp-for="End" class="control-label"></label>
-        <input asp-for="End" type="datetime-local" class="form-control" />
-        <span asp-validation-for="End" class="text-danger"></span>
-    </div>
+        <!-- End -->
+        <div class="form-group mb-3">
+            <label asp-for="End" class="form-label">End Time</label>
+            <input asp-for="End" type="datetime-local" class="form-control" />
+            <span asp-validation-for="End" class="text-danger"></span>
+        </div>
 
-    <!-- Capacity -->
-    <div class="form-group">
-        <label asp-for="Capacity" class="control-label"></label>
-        <input asp-for="Capacity" type="number" class="form-control" />
-        <span asp-validation-for="Capacity" class="text-danger"></span>
-    </div>
+        <!-- Capacity -->
+        <div class="form-group mb-3">
+            <label asp-for="Capacity" class="form-label">Capacity</label>
+            <input asp-for="Capacity" type="number" class="form-control" placeholder="Enter maximum capacity" />
+            <span asp-validation-for="Capacity" class="text-danger"></span>
+        </div>
 
-    <!-- Restaurant Dropdown -->
-    <div class="form-group">
-        <label>Restaurant</label>
-        <select asp-for="RestaurantId" class="form-control">
-            <option value="">-- Select Restaurant --</option>
-            @foreach (var restaurant in ViewBag.Restaurants)
-            {
-                <option value="@restaurant.Id">@restaurant.Name</option>
-            }
-        </select>
-        <span asp-validation-for="RestaurantId" class="text-danger"></span>
-    </div>
+        <!-- Restaurant Dropdown -->
+        <div class="form-group mb-3">
+            <label asp-for="RestaurantId" class="form-label">Restaurant</label>
+            <select asp-for="RestaurantId" class="form-control">
+                <option value="">-- Select Restaurant --</option>
+                @foreach (var restaurant in ViewBag.Restaurants)
+                {
+                    <option value="@restaurant.Id">@restaurant.Name</option>
+                }
+            </select>
+            <span asp-validation-for="RestaurantId" class="text-danger"></span>
+        </div>
 
-    <!-- Sitting Type Dropdown -->
-    <div class="form-group">
-        <label>Sitting Type</label>
-        <select asp-for="Type" class="form-control">
-            <option value="">-- Select Type --</option>
-            @foreach (var type in ViewBag.SittingTypes)
-            {
-                <option value="@((int)type)">@type</option>
-            }
-        </select>
-        <span asp-validation-for="Type" class="text-danger"></span>
-    </div>
+        <!-- Sitting Type Dropdown -->
+        <div class="form-group mb-3">
+            <label asp-for="Type" class="form-label">Sitting Type</label>
+            <select asp-for="Type" class="form-control">
+                <option value="">-- Select Type --</option>
+                @foreach (var type in ViewBag.SittingTypes)
+                {
+                    <option value="@((int)type)">@type</option>
+                }
+            </select>
+            <span asp-validation-for="Type" class="text-danger"></span>
+        </div>
 
-    <!-- Closed Checkbox -->
-    <div class="form-group">
-        <label asp-for="Closed" class="control-label"></label>
-        <input asp-for="Closed" type="checkbox" />
-    </div>
+        <!-- Submit Button -->
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-success btn-lg">
+                <i class="bi bi-check-circle"></i> Create Sitting
+            </button>
+        </div>
+    </form>
+</div>
 
-    <button type="submit" class="btn btn-primary">Create</button>
-</form>
+<!-- Custom Styling -->
+<style>
+    .container {
+        max-width: 700px;
+    }
+
+    .form-label {
+        font-weight: bold;
+    }
+
+    .form-control {
+        font-size: 1rem;
+    }
+
+    .form-check-label {
+        font-size: 1rem;
+    }
+
+    .btn-lg {
+        font-size: 1.25rem;
+        padding: 10px 20px;
+    }
+
+    .btn-success i {
+        margin-right: 8px;
+    }
+
+    .alert-danger {
+        font-size: 1rem;
+        margin-bottom: 20px;
+    }
+</style>

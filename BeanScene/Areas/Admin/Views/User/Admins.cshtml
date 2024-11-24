@@ -1,36 +1,67 @@
 @model IEnumerable<dynamic>
 
-<h1>Admins</h1>
+<div class="container mt-5">
+    <h1 class="text-center mb-4" style="color: var(--bean-dark-blue);">Admins</h1>
 
-<form asp-action="Admins" method="get" class="mb-3">
-    <div class="form-group row">
-        <div class="col-md-10">
-            <input type="text" name="email" class="form-control" placeholder="Search by email" value="@ViewData["EmailSearch"]" />
-        </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-primary">Search</button>
-        </div>
+    <!-- Search and Action Button -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <!-- View Members Button -->
+        <a asp-action="Members" class="btn btn-success" style="background-color: var(--bean-gold); border-color: var(--bean-dark-gold);">
+            <i class="bi bi-people-fill"></i> View Members
+        </a>
+
+        <!-- Search Form -->
+        <form asp-action="Admins" method="get" class="d-flex">
+            <input 
+                type="text" 
+                name="email" 
+                class="form-control me-2" 
+                placeholder="Search by email" 
+                value="@ViewData["EmailSearch"]" 
+                style="border-color: var(--bean-mid-blue);" />
+            <button type="submit" class="btn btn-primary" style="background-color: var(--bean-light-blue); border-color: var(--bean-mid-blue);">
+                <i class="bi bi-search"></i> Search
+            </button>
+        </form>
     </div>
-</form>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Email</th>
-            <th>Current Role(s)</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var user in Model)
-        {
-            <tr>
-                <td>@user.Email</td>
-                <td>@user.CurrentRoles</td>
-                 <td>
-                    <a asp-action="ManagerEdit" asp-route-id="@user.UserId" class="btn btn-primary">Edit Roles</a>
-                </td
-            </tr>
-        }
-    </tbody>
-</table>
+    <!-- Admins Table -->
+   <!-- Staff Table -->
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered shadow-sm">
+                <thead style="background-color: var(--bean-mid-blue); color: var(--white);">
+                    <tr>
+                        <th>Email</th>
+                        <th>Current Role(s)</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td>@user.Email</td>
+                            <td>
+                                @string.Join(", ", user.CurrentRoles)
+                            </td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@user.UserId" class="btn btn-sm" style="background-color: var(--bean-light-blue); color: var(--white);">
+                                    <i class="bi bi-pencil-square"></i> Edit Roles
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning text-center">
+            No admins found matching your search criteria.
+        </div>
+    }
+</div>
+

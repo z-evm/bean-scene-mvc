@@ -1,58 +1,232 @@
 @model Reservation
 
-<h2>Confirm Your Booking</h2>
+<div class="container mt-5">
+    <div class="col-md-8 mx-auto">
+        <!-- Go Back Button -->
+        <div class="d-flex justify-content-start mb-3">
+            <button type="button" class="btn btn-secondary" onclick="goBack()">Go Back</button>
+        </div>
 
-<p><strong>Selected Time:</strong> @Model.Start.ToString("yyyy-MM-d  HH:mm")</p>
-<p><strong>Guests:</strong> @Model.Pax</p>
+        <script>
+            // Script to handle navigation without form resubmission
+            function goBack() {
+                const previousPage = document.referrer; // Refers to the last page
+                if (previousPage) {
+                    window.location.href = previousPage; // Navigate to the previous page
+                } else {
+                    window.location.href = "/"; // Default to home page if no referrer
+                }
+            }
+        </script>
 
-<form asp-action="Book" method="post">
-    @Html.AntiForgeryToken()
+        <!-- Success Message -->
+        @{
+            var successMessage = TempData["SuccessMessage"] as string;
+        }
 
-    <input type="hidden" asp-for="SittingId" value="@ViewBag.SittingId" />
-    <input type="hidden" asp-for="Pax" value="@ViewBag.Guests" />
-    <input type="hidden" asp-for="Start" value="@ViewBag.SelectedTimeSlot.ToString("yyyy-MM-ddTHH:mm:ss")" />
-
-     <div class="form-group">
-    <label>Select Tables:</label>
-    <div>
-        @if (ViewBag.AvailableTables != null)
+        @if (!string.IsNullOrEmpty(successMessage))
         {
-            var availableTables = ViewBag.AvailableTables as List<RestaurantTable>;
-            foreach (var table in availableTables!)
-            {
-                <div class="form-check">
-                    <input type="checkbox" name="selectedTableIds" value="@table.Id" id="table_@table.Id" class="form-check-input" />
-                    <label class="form-check-label" for="table_@table.Id">
-                        Table @table.Number
+            <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                @successMessage
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <h2 class="text-center text-primary mb-4">Confirm Your Booking</h2>
+
+
+        <form asp-action="Book" method="post" class="p-4 shadow rounded bg-light">
+            @Html.AntiForgeryToken()
+
+            <!-- Hidden Fields -->
+            <input type="hidden" asp-for="SittingId" value="@ViewBag.SittingId" />
+            <input type="hidden" asp-for="Pax" value="@ViewBag.Guests" />
+            <input type="hidden" asp-for="Start" value="@ViewBag.SelectedTimeSlot.ToString("yyyy-MM-ddTHH:mm:ss")" />
+
+            <!-- Available Tables -->
+            <div class="form-group mb-4">
+                <label class="form-label fw-bold">Select Tables:</label>
+                <div class="table-grid border p-3 rounded bg-white">
+                    @if (ViewBag.AvailableTables != null)
+                    {
+                        var availableTables = ViewBag.AvailableTables as List<RestaurantTable>;
+                        foreach (var table in availableTables!)
+                        {
+                            <div class="form-check table-box">
+                                <input 
+                                    type="checkbox" 
+                                    name="selectedTableIds" 
+                                    value="@table.Id" 
+                                    id="table_@table.Id" 
+                                    class="form-check-input table-checkbox" />
+                                <label class="form-check-label" for="table_@table.Id">Table @table.Number</label>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-danger text-center">No tables are available for the selected time slot.</p>
+                    }
+                </div>
+            </div>
+
+            <!-- User Information -->
+            <div class="form-group mb-3">
+                <label asp-for="Person.Name" class="form-label fw-bold">Name</label>
+                <input asp-for="Person.Name" class="form-control form-control-lg" placeholder="Enter your name" />
+                <span asp-validation-for="Person.Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Person.Email" class="form-label fw-bold">Email</label>
+                <input asp-for="Person.Email" class="form-control form-control-lg" placeholder="Enter your email" />
+                <span asp-validation-for="Person.Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Person.Phone" class="form-label fw-bold">Phone</label>
+                <input asp-for="Person.Phone" class="form-control form-control-lg" placeholder="Enter your phone number" />
+                <span asp-validation-for="Person.Phone" class="text-danger"></span>
+            </div>
+
+            <!-- Additional Notes -->
+            <div class="form-group mb-4">
+                <label asp-for="Notes" class="form-label fw-bold">Additional Notes</label>
+                <textarea asp-for="Notes" class="form-control form-control-lg" rows="3" placeholder="Any additional requests or information"></textarea>
+                <span asp-validation-for="Notes" class="text-danger"></span>
+            </div>
+
+                <!-- Order Summary -->
+            <div class="alert alert-secondary text-center mb-4">
+                <h5>Order Summary</h5>
+                <ul class="list-unstyled mb-0">
+                    <li><strong>Reservation Time:</strong> @Model.Start.ToString("yyyy-MM-dd HH:mm")</li>
+                    <li><strong>Guests:</strong> @Model.Pax</li>
+                    <li><strong>Restaurant:</strong> @(Model?.Sitting?.Restaurant?.Name ?? "Bean Scene")</li>
+                </ul>
+            </div>
+
+            <!-- Checkboxes for Confirmation -->
+            <div class="form-group mb-4 p-3 border rounded shadow-sm bg-white">
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="cancellationPolicy" required>
+                    <label class="form-check-label" for="cancellationPolicy">
+                        I agree to the Cancellation Policy.*
                     </label>
                 </div>
-            }
-        }
-        else
-        {
-            <p>No tables are available for the selected time slot.</p>
-        }
-        </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="marketing" name="marketingOptIn">
+                    <label class="form-check-label" for="marketing">
+                        I'd like to hear about news and events from the venue.
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="smsOptIn" name="smsOptIn">
+                    <label class="form-check-label" for="smsOptIn">
+                        I agree to receive automated text messages for reminders.
+                    </label>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="d-flex justify-content-between mt-4">
+                <button type="submit" class="btn btn-success btn-lg">
+                    <i class="bi bi-check-circle-fill"></i> Confirm Booking
+                </button>
+                <a asp-action="Index" class="btn btn-secondary btn-lg">
+                    <i class="bi bi-x-circle-fill"></i> Cancel
+                </a>
+            </div>
+        </form>
     </div>
+</div>
 
+<!-- Styling -->
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
 
-    <div class="form-group">
-        <label asp-for="Person.Name">Name</label>
-        <input asp-for="Person.Name" class="form-control" />
-        <span asp-validation-for="Person.Name" class="text-danger"></span>
-    </div>
+    h2 {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #343a40;
+    }
 
-    <div class="form-group">
-        <label asp-for="Person.Email">Email</label>
-        <input asp-for="Person.Email" class="form-control" />
-        <span asp-validation-for="Person.Email" class="text-danger"></span>
-    </div>
+    .form-label {
+        font-size: 1rem;
+        color: #495057;
+    }
 
-    <div class="form-group">
-        <label asp-for="Person.Phone">Phone</label>
-        <input asp-for="Person.Phone" class="form-control" />
-        <span asp-validation-for="Person.Phone" class="text-danger"></span>
-    </div>
+    .form-control {
+        font-size: 1.1rem;
+        padding: 10px;
+        border-radius: 5px;
+    }
 
-    <button type="submit" class="btn btn-success">Confirm Booking</button>
-</form>
+    .form-control::placeholder {
+        font-size: 0.95rem;
+        color: #6c757d;
+    }
+
+    .alert {
+        font-size: 1.1rem;
+    }
+
+    .btn-success {
+        background-color: #083944;
+        border: none;
+        font-size: 1.2rem;
+        padding: 10px;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-success:hover {
+        background-color: #4AA1B5;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+
+    .btn-secondary:hover {
+        background-color: #545b62;
+        border-color: #4e555b;
+    }
+
+    .shadow {
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .rounded {
+        border-radius: 8px;
+    }
+
+    /* Table selection grid */
+    .table-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 15px;
+        margin-top: 10px;
+    }
+
+    .table-box {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        text-align: center;
+        transition: transform 0.2s, box-shadow 0.2s;
+        cursor: pointer;
+    }
+
+    .table-box:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        transform: scale(1.05);
+    }
+</style>

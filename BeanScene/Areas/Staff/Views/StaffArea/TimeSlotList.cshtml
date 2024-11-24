@@ -2,47 +2,123 @@
     var timeSlots = ViewBag.TimeSlots as List<(DateTime SlotStart, bool IsAvailable)>;
 }
 
-<h2>Available Time Slots</h2>
+<div class="container mt-5">
+    <h2 class="text-center text-primary mb-4">Available Time Slots</h2>
 
-@if (timeSlots != null && timeSlots.Any())
-{
-    <form asp-action="Book" method="get">
-        @Html.AntiForgeryToken()
+    @if (timeSlots != null && timeSlots.Any())
+    {
+        <form asp-action="Book" method="get" class="p-4 shadow rounded bg-light">
+            @Html.AntiForgeryToken()
 
-        <!-- Include SittingId -->
-        <input type="hidden" name="sittingId" value="@ViewBag.SittingId" />
-        <input type="hidden" name="guests" value="@ViewBag.Guests" />
+            <!-- Include SittingId and Guests -->
+            <input type="hidden" name="sittingId" value="@ViewBag.SittingId" />
+            <input type="hidden" name="guests" value="@ViewBag.Guests" />
 
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Select</th>
-                    <th>Time</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
+            <div class="time-slot-grid">
                 @foreach (var slot in timeSlots)
                 {
-                    <tr>
-                        <td>
-                            @if (slot.IsAvailable)
-                            {
-                                <!-- Use radio buttons for selectable time slots -->
-                                <input type="radio" name="selectedTimeSlot" value="@slot.SlotStart.ToString("yyyy-MM-ddTHH:mm:ss")" required />
-                            }
-                        </td>
-                        <td>@slot.SlotStart.ToString("HH:mm")</td>
-                        <td>@(slot.IsAvailable ? "Available" : "Full")</td>
-                    </tr>
+                    <button 
+                        type="submit" 
+                        name="selectedTimeSlot" 
+                        value="@slot.SlotStart.ToString("yyyy-MM-ddTHH:mm:ss")" 
+                        class="time-slot-box @(slot.IsAvailable ? "available" : "unavailable")" 
+                        @(slot.IsAvailable ? "" : "disabled")
+                        title="@(slot.IsAvailable ? "Click to select this time slot" : "This time slot is unavailable")"
+                        aria-disabled="@(slot.IsAvailable ? "false" : "true")">
+                        @slot.SlotStart.ToString("HH:mm")
+                    </button>
                 }
-            </tbody>
-        </table>
+            </div>
+        </form>
+    }
+    else
+    {
+        <div class="alert alert-warning text-center mt-4">
+            No available time slots within the specified range.
+        </div>
+    }
+</div>
 
-        <button type="submit" class="btn btn-primary">Book</button>
-    </form>
-}
-else
-{
-    <p>No available time slots within the specified range.</p>
-}
+<!-- Styling -->
+<style>
+    /* Container styling */
+    .container {
+        max-width: 800px;
+    }
+
+    /* Time slot grid container */
+    .time-slot-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    /* Time slot button styling */
+    .time-slot-box {
+        display: inline-block;
+        width: 100%;
+        height: 60px;
+        background-color: #f8f9fa;
+        color: #333;
+        text-align: center;
+        line-height: 60px;
+        font-size: 16px;
+        font-weight: bold;
+        border: 2px solid transparent;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Available time slots */
+    .time-slot-box.available {
+        background-color: #4AA1B5;
+        color: white;
+        border: 2px solid #4AA1B5;
+    }
+
+    .time-slot-box.available:hover,
+    .time-slot-box.available:focus {
+        background-color: #378a97;
+        border-color: #2d7281;
+        box-shadow: 0 4px 8px rgba(74, 161, 181, 0.3);
+    }
+
+    /* Unavailable time slots */
+    .time-slot-box.unavailable {
+        background-color: #e0e0e0;
+        color: #999;
+        cursor: not-allowed;
+        border: 2px solid #ccc;
+    }
+
+    .time-slot-box.unavailable:hover {
+        background-color: #e0e0e0; /* Keep same color on hover */
+        border-color: #ccc;
+    }
+
+    /* Disabled slots */
+    .time-slot-box:disabled {
+        pointer-events: none;
+        opacity: 0.6;
+    }
+
+    /* General form styles */
+    .p-4 {
+        padding: 2rem;
+    }
+
+    .shadow {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .rounded {
+        border-radius: 8px;
+    }
+
+    .alert {
+        font-size: 1.1rem;
+    }
+</style>

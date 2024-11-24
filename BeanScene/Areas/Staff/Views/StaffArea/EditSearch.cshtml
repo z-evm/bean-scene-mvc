@@ -1,26 +1,123 @@
 @model dynamic
 
-<h2>Edit Reservation - Search Time Slots</h2>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="text-center text-primary mb-4">Edit Reservation - Search Time Slots</h2>
 
-<form asp-action="EditSearch" method="post">
-    @Html.AntiForgeryToken()
+            <form asp-action="EditSearch" method="post" class="p-4 shadow rounded bg-light">
+                @Html.AntiForgeryToken()
 
-    <input type="hidden" name="id" value="@ViewBag.ReservationId" />
+                <!-- Reservation ID (Hidden) -->
+                <input type="hidden" name="id" value="@ViewBag.ReservationId" />
 
-    <div class="form-group">
-        <label for="Date">Date:</label>
-        <input type="date" id="Date" name="date" class="form-control" value="@ViewBag.Date" required />
+                <!-- Date Selection -->
+                <div class="form-group mb-4">
+                    <label for="Date" class="form-label fw-bold">Date</label>
+                    <input 
+                        type="date" 
+                        id="Date" 
+                        name="date" 
+                        class="form-control form-control-lg" 
+                        value="@ViewBag.Date" 
+                        required />
+                </div>
+
+                <!-- Time Selection -->
+                <div class="form-group mb-4">
+                    <label for="Time" class="form-label fw-bold">Time</label>
+                    <input 
+                        type="time" 
+                        id="Time" 
+                        name="time" 
+                        class="form-control form-control-lg" 
+                        value="@ViewBag.Time" 
+                        required />
+                </div>
+
+                <!-- Number of Guests -->
+                <div class="form-group mb-4">
+                    <label for="Guests" class="form-label fw-bold">Guests</label>
+                    <input 
+                        type="number" 
+                        id="Guests" 
+                        name="guests" 
+                        class="form-control form-control-lg" 
+                        value="@ViewBag.Guests" 
+                        min="1" 
+                        required />
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-grid">
+                    <button type="submit" class="searchButton">Search</button>
+                </div>
+            </form>
+
+            <!-- Optional Success/Error Alerts -->
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success mt-3">
+                    @TempData["SuccessMessage"]
+                </div>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger mt-3">
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+        </div>
     </div>
+</div>
 
-    <div class="form-group">
-        <label for="Time">Time:</label>
-        <input type="time" id="Time" name="time" class="form-control" value="@ViewBag.Time" required />
-    </div>
+<!-- Styling -->
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
 
-    <div class="form-group">
-        <label for="Guests">Guests:</label>
-        <input type="number" id="Guests" name="guests" class="form-control" value="@ViewBag.Guests" min="1" required />
-    </div>
+    h2 {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #007bff;
+    }
 
-    <button type="submit" class="btn btn-primary">Search</button>
-</form>
+    .form-label {
+        font-weight: bold;
+        color: #495057;
+    }
+
+    .form-control {
+        font-size: 1.1rem;
+        padding: 10px;
+        border: 1px solid #ced4da;
+        border-radius: 5px;
+    }
+
+    .form-control-lg {
+        font-size: 1.2rem;
+        padding: 15px;
+    }
+
+    .searchButton {
+        font-size: 1.2rem;
+        padding: 10px 30px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .searchButton:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+    }
+
+    .alert {
+        font-size: 1rem;
+        border-radius: 5px;
+    }
+</style>

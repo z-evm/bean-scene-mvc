@@ -1,39 +1,119 @@
 @model IEnumerable<dynamic>
 
-<h1>Members</h1>
+<div class="container mt-5">
+    <!-- Page Title -->
+    <h1 class="text-center mb-4" style="color: var(--bean-dark-blue);">Members</h1>
 
-<!-- Search Form -->
-<form asp-action="Members" method="get" class="mb-3">
-    <div class="form-group row">
-        <div class="col-md-10">
-            <input type="text" name="email" class="form-control" placeholder="Search by email" value="@ViewData["EmailSearch"]" />
-        </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-primary">Search</button>
-        </div>
+    <!-- Search and Action Buttons -->
+    <div class="d-flex justify-content-end align-items-center mb-4">
+        <!-- Search Form -->
+        <form asp-action="Members" method="get" class="d-flex">
+            <input 
+                type="text" 
+                name="email" 
+                class="form-control me-2" 
+                placeholder="Search by email" 
+                value="@ViewData["EmailSearch"]" 
+                style="border-color: var(--bean-mid-blue);" 
+                aria-label="Search by email" />
+            <button type="submit" class="btn btn-primary" style="background-color: var(--bean-light-blue); border-color: var(--bean-mid-blue);">
+                <i class="bi bi-search"></i> Search
+            </button>
+        </form>
     </div>
-    
-</form>
 
-<!-- Users Table -->
-<table class="table">
-    <thead>
-        <tr>
-            <th>Email</th>
-            <th>Current Role(s)</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var user in Model)
-        {
-            <tr>
-                <td>@user.Email</td>
-                <td>@user.CurrentRoles</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@user.UserId" class="btn btn-primary">Edit Roles</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <!-- Staff Table -->
+    @if (Model.Any())
+    {
+        <div class="table-responsive shadow-sm">
+            <table class="table table-bordered table-hover align-middle">
+                <thead style="background-color: var(--bean-mid-blue); color: var(--white);">
+                    <tr>
+                        <th>Email</th>
+                        <th>Current Role(s)</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td>@user.Email</td>
+                            <td>@string.Join(", ", user.CurrentRoles)</td>
+                            <td class="text-center">
+                                <a asp-action="Edit" asp-route-id="@user.UserId" class="btn btn-sm" style="background-color: var(--bean-light-blue); color: var(--white);">
+                                    <i class="bi bi-pencil-square"></i> Edit Roles
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning text-center">
+            No staff members found.
+        </div>
+    }
+</div>
+
+<!-- Custom Styles -->
+<style>
+  
+
+    h1 {
+        font-size: 2rem;
+        font-weight: bold;
+    }
+
+    /* Search Input Styling */
+    .form-control {
+        font-size: 1rem;
+        border-radius: 5px;
+        border: 2px solid var(--bean-mid-blue);
+    }
+
+    .form-control:focus {
+        box-shadow: 0 0 5px rgba(47, 102, 114, 0.5);
+        border-color: var(--bean-light-blue);
+    }
+
+    /* Table Styling */
+    .table {
+        font-size: 1rem;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    thead {
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    .btn-primary {
+        font-size: 0.9rem;
+        padding: 5px 10px;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--bean-mid-blue);
+    }
+
+    .btn-success {
+        background-color: var(--bean-gold);
+        border-color: var(--bean-dark-gold);
+    }
+
+    .btn-success:hover {
+        background-color: var(--bean-dark-gold);
+    }
+
+    .alert {
+        font-size: 1rem;
+        border-radius: 8px;
+    }
+</style>

@@ -1,51 +1,175 @@
 @{
     var timeSlots = ViewBag.TimeSlots as List<(DateTime SlotStart, bool IsAvailable)>;
     int sittingId = ViewBag.SittingId;
-
 }
 
-<h2>Available Time Slots</h2>
+<div class="container mt-5">
+    <h2 class="text-center text-primary mb-4">Available Time Slots</h2>
 
-@if (timeSlots != null && timeSlots.Any())
-{
-    <form asp-action="EditBook" method="get">
-        @Html.AntiForgeryToken()
+    @if (timeSlots != null && timeSlots.Any())
+    {
+        <form asp-action="EditBook" method="get" class="p-4 shadow rounded bg-light">
+            @Html.AntiForgeryToken()
 
-        <!-- Include SittingId -->
-        <input type="hidden" name="id" value="@ViewBag.ReservationId" />
-        <input type="hidden" name="sittingId" value="@ViewBag.SittingId" />
-        <input type="hidden" name="guests" value="@ViewBag.Guests" />
+            <!-- Include Reservation Details -->
+            <input type="hidden" name="id" value="@ViewBag.ReservationId" />
+            <input type="hidden" name="sittingId" value="@ViewBag.SittingId" />
+            <input type="hidden" name="guests" value="@ViewBag.Guests" />
 
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Select</th>
-                    <th>Time</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
+            <!-- Time Slots Grid -->
+            <div class="time-slot-grid border rounded shadow-sm p-3">
                 @foreach (var slot in timeSlots)
                 {
-                    <tr>
-                        <td>
-                            @if (slot.IsAvailable)
-                            {
-                                <!-- Use radio buttons for selectable time slots -->
-                                <input type="radio" name="selectedTimeSlot" value="@slot.SlotStart.ToString("yyyy-MM-ddTHH:mm:ss")" required />
-                            }
-                        </td>
-                        <td>@slot.SlotStart.ToString("HH:mm")</td>
-                        <td>@(slot.IsAvailable ? "Available" : "Full")</td>
-                    </tr>
+                    <div class="time-slot-box @(slot.IsAvailable ? "available" : "unavailable")">
+                        @if (slot.IsAvailable)
+                        {
+                            <input 
+                                type="radio" 
+                                id="slot_@slot.SlotStart.ToString("HHmm")" 
+                                name="selectedTimeSlot" 
+                                value="@slot.SlotStart.ToString("yyyy-MM-ddTHH:mm:ss")" 
+                                class="form-check-input" 
+                                required />
+                            <label for="slot_@slot.SlotStart.ToString("HHmm")" class="time-slot-label">
+                                @slot.SlotStart.ToString("HH:mm")
+                            </label>
+                        }
+                        else
+                        {
+                            <span class="text-muted unavailable-label">Unavailable</span>
+                        }
+                    </div>
                 }
-            </tbody>
-        </table>
+            </div>
 
-        <button type="submit" class="btn btn-primary">Book</button>
-    </form>
-}
-else
-{
-    <p>No available time slots within the specified range.</p>
-}
+            <!-- Submit Button -->
+            <div class="d-grid mt-4">
+                <button type="submit" class="btn btn-success btn-lg">
+                    <i class="bi bi-calendar-check"></i> Book
+                </button>
+            </div>
+        </form>
+    }
+    else
+    {
+        <div class="alert alert-warning text-center mt-4">
+            No available time slots within the specified range.
+        </div>
+    }
+</div>
+
+<!-- Styling -->
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    h2 {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #343a40;
+    }
+
+    .p-4 {
+        padding: 2rem;
+    }
+
+    .shadow {
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .rounded {
+        border-radius: 8px;
+    }
+
+    /* Grid for Time Slots */
+    .time-slot-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    /* Individual Time Slot Box */
+    .time-slot-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 15px;
+        border: 2px solid transparent;
+        border-radius: 8px;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .time-slot-box.available {
+        background-color: #4AA1B5;
+        color: white;
+        border: 2px solid #4AA1B5;
+    }
+
+    .time-slot-box.available:hover {
+        background-color: #378a97;
+        border-color: #2d7281;
+        transform: scale(1.05);
+    }
+
+    .time-slot-box.unavailable {
+        background-color: #e0e0e0;
+        color: #999;
+        border: 2px solid #ccc;
+        cursor: not-allowed;
+    }
+
+    .unavailable-label {
+        font-size: 1rem;
+        color: #999;
+    }
+
+    /* Hidden Radio Button Styling */
+    .form-check-input {
+        display: none;
+    }
+
+    .time-slot-label {
+        font-size: 1.2rem;
+        font-weight: bold;
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+        padding: 10px;
+        cursor: pointer;
+    }
+
+    /* Selected Time Slot */
+    .form-check-input:checked + .time-slot-label {
+        background-color: #083944;
+        color: white;
+        border: 2px solid #083944;
+        border-radius: 8px;
+        padding: 10px;
+    }
+
+    .btn-lg {
+        font-size: 1.25rem;
+        padding: 10px 20px;
+    }
+
+    .btn-success {
+        background-color: #083944;
+        border: none;
+        font-size: 1.2rem;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-success:hover {
+        background-color: #4AA1B5;
+    }
+
+    .alert {
+        font-size: 1.1rem;
+        border-radius: 8px;
+    }
+</style>

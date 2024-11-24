@@ -3,43 +3,53 @@
     ViewData["Title"] = "Search for a Sitting"; // Header
 }
 
-<h2>Search for a Sitting</h2>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="text-center mb-4">Search for a Sitting</h2>
 
-<form asp-action="Search" method="post">
-    @Html.AntiForgeryToken()
+            <form asp-action="Search" method="post" class="p-4 shadow rounded bg-light">
+                @Html.AntiForgeryToken()
 
-    <div class="form-group"> 
-        <label for="Date">Date</label>
-        <input type="date" id="Date" name="date" class="form-control" required />
+                <!-- Larger Date Selection -->
+                <div class="form-group mb-4">
+                    <label for="Date" class="form-label fw-bold">Date</label>
+                    <input type="date" id="Date" name="date" class="form-control form-control-lg" required />
+                </div>
+
+                <!-- Time Selection -->
+                <div class="form-group mb-4">
+                    <label for="timePicker" class="form-label fw-bold">Time</label>
+                    <select id="timePicker" name="time" class="form-select form-select-lg">
+                        @for (int hour = 7; hour < 22; hour++)
+                        {
+                            <option value="@hour:00">@hour.ToString("D2"):00</option>
+                            <option value="@hour:15">@hour.ToString("D2"):15</option>
+                            <option value="@hour:30">@hour.ToString("D2"):30</option>
+                            <option value="@hour:45">@hour.ToString("D2"):45</option>
+                        }
+                    </select>
+                </div>
+
+                <!-- Number of Guests -->
+                <div class="form-group mb-4">
+                    <label for="Guests" class="form-label fw-bold">Number of Guests</label>
+                    <input type="number" id="Guests" name="guests" class="form-control form-control-lg" required min="1" placeholder="Enter number of guests" />
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-grid">
+                    <button type="submit" class="searchButton">Search</button>
+                </div>
+            </form>
+
+            <!-- Error Message -->
+            @if (!string.IsNullOrEmpty(ViewData["ErrorMessage"] as string))
+            {
+                <div class="alert alert-danger mt-3">
+                    @ViewData["ErrorMessage"]
+                </div>
+            }
+        </div>
     </div>
-
-   <div class="form-group">
-    <label for="timePicker">Time</label>
-    <select id="timePicker" name="time" class="form-control">
-        <!-- Generate hours and minutes -->
-        @for (int hour = 7; hour < 22; hour++)
-        {
-            <option value="@hour:00">@hour.ToString("D2"):00</option>
-            <option value="@hour:15">@hour.ToString("D2"):15</option>
-            <option value="@hour:30">@hour.ToString("D2"):30</option>
-            <option value="@hour:45">@hour.ToString("D2"):45</option>
-        }
-        </select>
-    </div>
-
-
-
-    <div class="form-group">
-        <label for="Guests">Number of Guests</label>
-        <input type="number" id="Guests" name="guests" class="form-control" required min="1" />
-    </div>
-    
-    <button type="submit" class="btn btn-primary">Search</button>
-</form>
-
-@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"] as string))
-{
-    <div class="alert alert-danger">
-        @ViewData["ErrorMessage"]
-    </div>
-}
+</div>
