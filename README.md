@@ -18,7 +18,7 @@ This is an MVC system for the Bean Scene reservation system.
 
 2.  Configured your local database in appsetting.json  "Server=bean-scene-system.database.windows.net;Database=Bean-Scene;User ID=bean-scene-admin;Password=q@1#kEDWPV$kv3O%1beU@EZ;MultipleActiveResultSets=true;TrustServerCertificate=True"
 3.  Push all migration  : dotnet ef database update 
-4. Run dotnet run to run the data seeding.
+4. Run dotnet run to run the data seeding, which includes the creation of the below accounts
 
 
 
