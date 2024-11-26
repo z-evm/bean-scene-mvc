@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using BeanScene.Data;
+using BeanScene;
+using BeanScene.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +32,22 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>{
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        await context.Database.MigrateAsync(); // Ensure the database schema matches the models
+        await SeedData.SeedAsync(services); // Seed roles, users, and other data
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"An error occurred while seeding the database: {ex.Message}");
+    }
+}
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

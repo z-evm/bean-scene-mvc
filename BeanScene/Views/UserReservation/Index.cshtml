@@ -1,32 +1,125 @@
 @model IEnumerable<BeanScene.Models.Reservation>
 
-<h2>Your Reservations</h2>
+<h2 class="reservation-header">Your Reservations</h2>
 
 @if (!Model.Any())
 {
-    <p>You have no reservations.</p>
+    <div class="alert alert-info text-center" role="alert">
+        <p>You have no reservations.</p>
+    </div>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Reservation Date</th>
-                <th>Time</th>
-                <th>Guests</th>
-                <th>Notes</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var reservation in Model)
-            {
+    <div class="table-responsive">
+        <table class="table reservation-table">
+            <thead class="thead-dark">
                 <tr>
-                    <td>@reservation.Start.ToString("yyyy-MM-dd")</td>
-                    <td>@reservation.Start.ToString("HH:mm")</td>
-                    <td>@reservation.Pax</td>
-                    <td>@reservation.Notes</td>
+                    <th scope="col">Reservation Date</th>
+                    <th scope="col">Time</th>
+                    <th scope="col">Guests</th>
+                    <th scope="col">Notes</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var reservation in Model)
+                {
+                    var rowClass = reservation.Start < DateTime.Now ? "past-reservation" : "upcoming-reservation";
+
+                    <tr class="@rowClass">
+                        <td>@reservation.Start.ToString("yyyy-MM-dd")</td>
+                        <td>@reservation.Start.ToString("HH:mm")</td>
+                        <td>@reservation.Pax</td>
+                        <td>@reservation.Notes</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }
+
+<style>
+:root {
+    --bean-dark-blue: #083944;
+    --bean-mid-blue: #2F6672;
+    --bean-light-blue: #4AA1B5;
+    --bean-gold: #EBC136;
+    --bean-dark-gold: #CC9E09;
+    --white: #FFFFFF;
+}
+
+/* General Styling */
+body {
+    font-family: Arial, sans-serif;
+    color: var(--bean-dark-blue);
+    margin: 0;
+    padding: 0;
+}
+
+/* Header Styling */
+.reservation-header {
+    color: var(--bean-dark-gold);
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Alert Styling */
+.alert {
+    background-color: var(--bean-mid-blue);
+    color: var(--white);
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 20px;
+}
+
+/* Table Styling */
+.reservation-table {
+    background-color: var(--white);
+    border-collapse: collapse;
+    width: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.reservation-table th {
+    background-color: var(--bean-dark-blue);
+    color: var(--white);
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+    font-size: 1rem;
+    border: 1px solid var(--bean-dark-blue);
+}
+
+.reservation-table td {
+    text-align: center;
+    padding: 10px;
+    font-size: 0.95rem;
+    border: 1px solid var(--bean-light-blue);
+}
+
+/* Row Styling */
+.past-reservation {
+    background-color: #ffe5e5; /* Light red for past reservations */
+}
+
+.upcoming-reservation {
+    background-color: var(--bean-gold); /* Gold for upcoming reservations */
+}
+
+/* Table Responsiveness */
+.table-responsive {
+    margin: 20px 0;
+    overflow-x: auto;
+    border-radius: 8px;
+    background-color: var(--white);
+    padding: 10px;
+}
+
+/* Hover Effects */
+.reservation-table tr:hover {
+    background-color: var(--bean-light-blue);
+    color: var(--white);
+    transition: background-color 0.3s ease;
+}
+</style>
