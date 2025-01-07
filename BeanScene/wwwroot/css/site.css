@@ -34,6 +34,8 @@
 
 html {
     font-size: 14px;
+    position: relative;
+    min-height: 100%;
 }
 @media (min-width: 768px) {
   html {
@@ -45,14 +47,9 @@ html {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
-}
-
 body {
     margin-bottom: 60px;
-    font-family: Open Sans;
+    font-family: 'Open Sans', sans-serif;
     color: var(--bean-dark-blue);
 }
 .logo {
@@ -60,7 +57,7 @@ body {
     height:auto;
 }
 h1, h2, h3, h4, h5, h6 {
-    font-family:Open Sans Light;
+    font-family:'Open Sans', sans-serif;
 }
 h1, a, button {
     color:var(--bean-light-blue);
@@ -103,4 +100,3 @@ footer {
 .searchButton:hover {
     background-color: #3a8a99; /* Slightly darker blue on hover */
 }
-
