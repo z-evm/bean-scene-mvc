@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BeanScene.Areas.Admin.Controllers
 {
-    [Authorize(Roles = "Admin,Manager")]
+    [Authorize(Roles = "Admin")]
     [Area("Admin")]
     public class UserController : Controller
     {
@@ -44,6 +44,47 @@ namespace BeanScene.Areas.Admin.Controllers
 
             ViewData["EmailSearch"] = email;
             return View(userList);
+        }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            var roles = new List<string> { "Admin", "Staff", "Member" };
+            ViewBag.Roles = roles;
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Create(string email, string password, string selectedRole)
+        {
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(selectedRole))
+            {
+                return BadRequest("Email, password, and role are required.");
+            }
+
+            var user = new IdentityUser { UserName = email, Email = email };
+            var result = await _userManager.CreateAsync(user, password);
+
+            if (result.Succeeded)
+            {
+                if (!await _roleManager.RoleExistsAsync(selectedRole))
+                {
+                    await _roleManager.CreateAsync(new IdentityRole(selectedRole));
+                }
+
+                await _userManager.AddToRoleAsync(user, selectedRole);
+                return RedirectToAction(nameof(Index));
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+
+            var roles = new List<string> { "Admin", "Staff", "Member" };
+            ViewBag.Roles = roles;
+            return View();
         }
 
         [HttpGet]
@@ -105,7 +146,7 @@ namespace BeanScene.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Admins(string email)
         {
             var users = _userManager.Users.ToList();
@@ -158,7 +199,7 @@ namespace BeanScene.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Manager,Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(string userId, string selectedRole)
         {
             var user = await _userManager.FindByIdAsync(userId);
@@ -174,6 +215,11 @@ namespace BeanScene.Areas.Admin.Controllers
 
             if (!string.IsNullOrEmpty(selectedRole) && allowedRoles.Contains(selectedRole))
             {
+                if (!await _roleManager.RoleExistsAsync(selectedRole))
+                {
+                    await _roleManager.CreateAsync(new IdentityRole(selectedRole));
+                }
+
                 var result = await _userManager.AddToRoleAsync(user, selectedRole);
                 if (!result.Succeeded)
                 {
@@ -189,8 +235,8 @@ namespace BeanScene.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> ManagerEdit(string id)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
@@ -198,18 +244,26 @@ namespace BeanScene.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var roles = new List<string> { "Admin", "Staff", "Member" };
-            var currentRoles = await _userManager.GetRolesAsync(user);
+            return View(user);
+        }
 
-            var model = new
+        [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteConfirmed(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
             {
-                UserId = user.Id,
-                Email = user.Email,
-                Roles = roles,
-                CurrentRoles = currentRoles
-            };
+                return NotFound();
+            }
 
-            return View(model);
+            var result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+            {
+                return BadRequest("Failed to delete the user.");
+            }
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }
