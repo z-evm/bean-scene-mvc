@@ -24,10 +24,8 @@ namespace BeanScene.Areas.Admin.Controllers
             _logger = logger;
             _context = context;
         }
-
-
-
         [HttpGet]
+
 public async Task<IActionResult> Index(DateTime? date)
 {
     var selectedDate = date?.Date ?? DateTime.Today;
@@ -60,11 +58,6 @@ public async Task<IActionResult> Index(DateTime? date)
     return View(sittings);
 }
 
-
-
-
-
-
         // GET: Sittings/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -85,13 +78,7 @@ public async Task<IActionResult> Index(DateTime? date)
             return View(sitting);
         }
 
-
-
-
-
-
-
-          // GET: Sittings/Create
+        // GET: Sittings/Create
         public async Task<IActionResult> Create()
         {
             // Fetch all restaurants to display in the dropdown
@@ -139,12 +126,6 @@ public async Task<IActionResult> Index(DateTime? date)
             return View(sitting);
         }
 
-
-
-
-
-
-
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -166,19 +147,9 @@ public async Task<IActionResult> Index(DateTime? date)
 
             return View(sitting);
         }
-
-    
-
-
-
-
-
-
-
-
-
     [HttpPost]
     [ValidateAntiForgeryToken]
+
     public async Task<IActionResult> Edit(int id, Sitting sitting)
     {
         if (id != sitting.Id)
@@ -221,21 +192,6 @@ public async Task<IActionResult> Index(DateTime? date)
         return View(sitting);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             // GET: Sittings/Delete/5
             public async Task<IActionResult> Delete(int? id)
             {
@@ -255,14 +211,6 @@ public async Task<IActionResult> Index(DateTime? date)
                 return View(sitting);
             }
 
-
-
-
-
-
-
-
-
         // POST: Sittings/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -277,9 +225,5 @@ public async Task<IActionResult> Index(DateTime? date)
 
             return RedirectToAction(nameof(Index));
         }
-
-       
-
-
     }
 }
