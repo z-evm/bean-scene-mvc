@@ -18,6 +18,7 @@ namespace BeanScene.Controllers
         private readonly ILogger<ReservationController> _logger;
         private readonly UserManager<IdentityUser> _userManager;
 
+        // Constructor to initialize the controller with dependencies
         public ReservationController(ApplicationDbContext context, ILogger<ReservationController> logger, UserManager<IdentityUser> userManager)
         {
             _context = context;
@@ -25,20 +26,29 @@ namespace BeanScene.Controllers
             _userManager = userManager;
         }
 
+        // GET: /Reservation/Search
         [HttpGet]
         public IActionResult Search()
         {
             return View();
         }
 
+        // POST: /Reservation/Search
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Search(DateTime date, TimeSpan time, int guests)
         {
+            if (!ModelState.IsValid)
+            {
+                return View("Search");
+            }
+
+            // Calculate the selected time and the range for searching sittings
             DateTime selectedTime = date.Date.Add(time);
             DateTime rangeStart = selectedTime.AddHours(-1);
             DateTime rangeEnd = selectedTime.AddHours(1);
 
+            // Find sittings within the specified range that are not closed
             var sittings = await _context.Sittings 
                 .Include(s => s.Reservations)
                 .Where(s => s.Start <= rangeEnd && s.End >= rangeStart && !s.Closed)
@@ -52,6 +62,7 @@ namespace BeanScene.Controllers
 
             var timeSlots = new List<(DateTime SlotStart, bool IsAvailable)>();
 
+            // Check availability of time slots within the sittings
             foreach (var sitting in sittings)
             {
                 DateTime currentTime = sitting.Start > rangeStart ? sitting.Start : rangeStart;
@@ -74,18 +85,26 @@ namespace BeanScene.Controllers
                 return View("Search");
             }
 
+            // Pass the available time slots to the view
             ViewBag.TimeSlots = timeSlots; 
             ViewBag.Guests = guests;
             ViewBag.SelectedDateTime = selectedTime;
-            ViewBag.SittingId = sittings.First().Id;
+            ViewBag.SittingId = sittings[0].Id;
 
             return View("TimeSlotList");
         }
 
+        // GET: /Reservation/Book
         public async Task<IActionResult> Book(int sittingId, int guests, DateTime selectedTimeSlot)
         {
+            if (!ModelState.IsValid)
+            {
+                return View("Book");
+            }
+
             Person? person = null;
 
+            // Get the current user and find or create a corresponding Person entity
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser != null)
             {
@@ -105,6 +124,7 @@ namespace BeanScene.Controllers
                 }
             }
 
+            // Find the sitting by ID and ensure it is not closed
             var sitting = await _context.Sittings
                 .Include(s => s.Reservations)
                 .FirstOrDefaultAsync(s => s.Id == sittingId && !s.Closed);
@@ -114,6 +134,7 @@ namespace BeanScene.Controllers
                 return NotFound("Sitting not available.");
             }
 
+            // Pass the booking details to the view
             ViewBag.SittingId = sittingId;
             ViewBag.Guests = guests;
             ViewBag.SelectedTimeSlot = selectedTimeSlot;
@@ -126,7 +147,7 @@ namespace BeanScene.Controllers
             });
         }
 
-
+        // POST: /Reservation/Book
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Book(Reservation reservation)
@@ -202,7 +223,7 @@ namespace BeanScene.Controllers
                 _context.Reservations.Add(reservation);
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction("Index", "Home"); // This line is unreachable.
+                return RedirectToAction("Index", "Home");
             }
             catch (Exception ex)
             {
@@ -211,7 +232,5 @@ namespace BeanScene.Controllers
                 return View(reservation);
             }
         }
-
     }
 }
-

@@ -13,6 +13,7 @@ namespace BeanScene.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
+        // Constructor to initialize the controller with dependencies
         public HomeController(ApplicationDbContext context,UserManager<IdentityUser> userManager,RoleManager<IdentityRole> roleManager,ILogger<HomeController> logger)
         {
             _logger = logger;
@@ -21,94 +22,100 @@ namespace BeanScene.Controllers
             _roleManager = roleManager;
         }
 
+        // GET: /Home/Index
         public async Task<IActionResult> Index()
         {
-            foreach (string r in new[] {"Manager","Admin","Staff","Member"}){
-                if(!await _roleManager.RoleExistsAsync(r)){
+            _logger.LogInformation("Index action called.");
+
+            // Ensure required roles exist
+            foreach (string r in new[] { "Manager", "Admin", "Staff", "Member" })
+            {
+                if (!await _roleManager.RoleExistsAsync(r))
+                {
+                    _logger.LogInformation("Creating role: {Role}", r);
                     await _roleManager.CreateAsync(new IdentityRole(r));
                 }
             }
 
-            //var manager=await _userManager.FindByNameAsync("manager@BeanScene");
-            //var resultAdmin=await _userManager.AddToRoleAsync(manager!,"manager");
-
-            
-            //var admin=await _userManager.FindByNameAsync("admin@BeanScene");
-            //var resultAdmin=await _userManager.AddToRoleAsync(admin!,"Admin");
-
-            //var staff=await _userManager.FindByNameAsync("staff@BeanScene");
-            // resultStaff=await _userManager.AddToRoleAsync(staff!,"Staff");
-
-        if (User.Identity!.IsAuthenticated) // Only call if the user is logged in
-        {
+            // If the user is authenticated, ensure they are associated with a Person entity
+            if (User.Identity!.IsAuthenticated)
+            {
+                _logger.LogInformation("User is authenticated.");
                 var result = await EnsurePersonAssociation();
                 if (result is UnauthorizedResult || result is NotFoundResult)
                 {
-                    return result; // Handle unauthorized or user-not-found scenarios
+                    _logger.LogWarning("EnsurePersonAssociation returned {Result}", result);
+                    return result;
                 }
-        }
+            }
 
             return View();
         }
 
+        // Method to ensure the authenticated user is associated with a Person entity
         public async Task<IActionResult> EnsurePersonAssociation()
         {
-            // Get the logged-in user's email
-            var userEmail = User.Identity!.Name; // The logged-in user's email
+            _logger.LogInformation("EnsurePersonAssociation action called.");
+
+            // Get the user's email
+            var userEmail = User.Identity!.Name;
             if (userEmail == null)
             {
-                return Unauthorized(); // Ensure the user is authenticated
+                _logger.LogWarning("User email is null.");
+                return Unauthorized();
             }
 
-            // Retrieve the logged-in user from Identity
+            // Find the user by email
             var user = await _userManager.FindByEmailAsync(userEmail);
             if (user == null)
             {
+                _logger.LogWarning("User not found: {Email}", userEmail);
                 return NotFound("User not found.");
             }
 
-            // Check if the user has any roles
+            // Ensure the user has at least one role
             var userRoles = await _userManager.GetRolesAsync(user);
             if (userRoles.Count == 0)
             {
-                // If the user has no roles, assign the "Member" role
+                _logger.LogInformation("User has no roles, assigning 'Member' role.");
                 var roleResult = await _userManager.AddToRoleAsync(user, "Member");
                 if (!roleResult.Succeeded)
                 {
+                    _logger.LogError("Failed to assign 'Member' role to user: {Email}", userEmail);
                     return BadRequest("Failed to assign 'Member' role.");
                 }
             }
 
-            // Perform case-insensitive comparison for Person's email
+            // Find or create a Person entity associated with the user
             var person = _context.Persons
-                .AsEnumerable() // Convert to in-memory for case-insensitive comparison
+                .AsEnumerable()
                 .FirstOrDefault(p => string.Equals(p.Email, userEmail, StringComparison.OrdinalIgnoreCase));
 
             if (person != null)
             {
-                // Associate the IdentityUser with the Person if not already associated
                 if (string.IsNullOrEmpty(person.UserId))
                 {
-                    person.UserId = user.Id; // Set the UserId foreign key
+                    _logger.LogInformation("Associating user {UserId} with person {PersonId}.", user.Id, person.Id);
+                    person.UserId = user.Id;
                     _context.Persons.Update(person);
                     await _context.SaveChangesAsync();
                 }
             }
             else
             {
-                // Optionally, create a new Person record if none exists
+                _logger.LogInformation("Creating new person for user {UserId}.", user.Id);
                 person = new Person
                 {
-                    Name = user.UserName, // You may need to customize this
+                    Name = user.UserName,
                     Email = userEmail,
-                    UserId = user.Id // Associate with the logged-in user
+                    UserId = user.Id
                 };
 
                 _context.Persons.Add(person);
                 await _context.SaveChangesAsync();
             }
 
-            return Ok(); // Or redirect to an appropriate action
+            return Ok();
         }
     }
 }
