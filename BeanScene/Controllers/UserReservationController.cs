@@ -11,7 +11,6 @@ namespace BeanScene.Controllers
         private readonly ILogger<UserReservationController> _logger;
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
-
         public UserReservationController(
             ApplicationDbContext context,
             UserManager<IdentityUser> userManager,
@@ -25,25 +24,21 @@ namespace BeanScene.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            // Get the current user
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return RedirectToAction("Login", "Account"); // Redirect to login if not authenticated
+                return RedirectToAction("Login", "Account");
             }
 
-            // Get the user's email
             var userEmail = user.Email;
 
-            // Fetch reservations for the user
             var reservations = await _context.Reservations
-                .Include(r => r.Sitting) // Include Sitting details (e.g., date, time)
-                .Include(r => r.Person) // Include Person details (e.g., name, email)
-                .Where(r => r.Person.Email == userEmail) // Match reservations by email
-                .OrderByDescending(r => r.Start) // Show latest reservations first
+                .Include(r => r.Sitting)
+                .Include(r => r.Person)
+                .Where(r => r.Person.Email == userEmail)
+                .OrderByDescending(r => r.Start)
                 .ToListAsync();
 
-            // Pass reservations to the view
             return View(reservations);
         }
     }

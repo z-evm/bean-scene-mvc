@@ -12,16 +12,11 @@ using Microsoft.AspNetCore.Identity;
 
 namespace BeanScene.Controllers
 {
-
-
-
-
     public class ReservationController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<ReservationController> _logger;
         private readonly UserManager<IdentityUser> _userManager;
-
 
         public ReservationController(ApplicationDbContext context, ILogger<ReservationController> logger, UserManager<IdentityUser> userManager)
         {
@@ -30,25 +25,19 @@ namespace BeanScene.Controllers
             _userManager = userManager;
         }
 
-        // Get /Reservation/Search
         [HttpGet]
         public IActionResult Search()
         {
             return View();
         }
 
-
-
-
-
-        // Post /Reservation/Search
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Search(DateTime date, TimeSpan time, int guests) // get param form search screen  push to listOftimeslot screen
+        public async Task<IActionResult> Search(DateTime date, TimeSpan time, int guests)
         {
-            DateTime selectedTime = date.Date.Add(time); // set up request  time
-            DateTime rangeStart = selectedTime.AddHours(-1); //  reservation search start time , 
-            DateTime rangeEnd = selectedTime.AddHours(1); //reservation search end time , 
+            DateTime selectedTime = date.Date.Add(time);
+            DateTime rangeStart = selectedTime.AddHours(-1);
+            DateTime rangeEnd = selectedTime.AddHours(1);
 
             var sittings = await _context.Sittings 
                 .Include(s => s.Reservations)
@@ -65,8 +54,7 @@ namespace BeanScene.Controllers
 
             foreach (var sitting in sittings)
             {
-
-                DateTime currentTime = sitting.Start > rangeStart ? sitting.Start : rangeStart;  // get available time 
+                DateTime currentTime = sitting.Start > rangeStart ? sitting.Start : rangeStart;
                 while (currentTime < sitting.End && currentTime < rangeEnd) 
                 {
                     var overlappingReservations = sitting.Reservations?
@@ -91,66 +79,52 @@ namespace BeanScene.Controllers
             ViewBag.SelectedDateTime = selectedTime;
             ViewBag.SittingId = sittings.First().Id;
 
-            return View("TimeSlotList"); // to TimeSlotList
+            return View("TimeSlotList");
         }
 
-
-
-        // GET: Reservation/Book
         public async Task<IActionResult> Book(int sittingId, int guests, DateTime selectedTimeSlot)
         {
-        Person? person = null; //get person
+            Person? person = null;
 
-        // Check if a user is logged in
-        var currentUser = await _userManager.GetUserAsync(User); // if it is login
-        if (currentUser != null)
-        {
-            // Find or create the associated Person
-            person = await _context.Persons.FirstOrDefaultAsync(p => p.UserId == currentUser.Id); // this assoite with person and user
-            if (person == null)
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser != null)
             {
-                // Create a new Person object to prefill with logged-in user's details
-                person = new Person
+                person = await _context.Persons.FirstOrDefaultAsync(p => p.UserId == currentUser.Id);
+                if (person == null)
                 {
-                    Name = currentUser.UserName ?? "",
-                    Email = currentUser.Email ?? "",
-                    Phone = currentUser.Email ??"" 
-                };
+                    person = new Person
+                    {
+                        Name = currentUser.UserName ?? "",
+                        Email = currentUser.Email ?? "",
+                        Phone = currentUser.Email ??"" 
+                    };
 
-                // Save the new Person in the database and associate it with the current user
-                person.UserId = currentUser.Id;
-                _context.Persons.Add(person);
-                await _context.SaveChangesAsync();
+                    person.UserId = currentUser.Id;
+                    _context.Persons.Add(person);
+                    await _context.SaveChangesAsync();
+                }
             }
+
+            var sitting = await _context.Sittings
+                .Include(s => s.Reservations)
+                .FirstOrDefaultAsync(s => s.Id == sittingId && !s.Closed);
+
+            if (sitting == null)
+            {
+                return NotFound("Sitting not available.");
+            }
+
+            ViewBag.SittingId = sittingId;
+            ViewBag.Guests = guests;
+            ViewBag.SelectedTimeSlot = selectedTimeSlot;
+
+            return View(new Reservation
+            {
+                Start = selectedTimeSlot,
+                Pax = guests,
+                Person = person!
+            });
         }
-
-        // Fetch the Sitting
-        var sitting = await _context.Sittings
-            .Include(s => s.Reservations)
-            .FirstOrDefaultAsync(s => s.Id == sittingId && !s.Closed);
-
-        if (sitting == null)
-        {
-            return NotFound("Sitting not available.");
-        }
-
-        // Populate ViewBag for Razor rendering
-        ViewBag.SittingId = sittingId;
-        ViewBag.Guests = guests;
-        ViewBag.SelectedTimeSlot = selectedTimeSlot;
-
-        // Return the reservation form
-        return View(new Reservation
-        {
-            Start = selectedTimeSlot,
-            Pax = guests,
-            Person = person! // Pre-fill for logged-in users, or null for guests
-        });
-    }
-
-
-
-
 
 
         [HttpPost]
@@ -225,13 +199,10 @@ namespace BeanScene.Controllers
                 // Assign the selected table to the reservation
                 reservation.Tables = new List<RestaurantTable> { assignedTable };
 
-
                 _context.Reservations.Add(reservation);
                 await _context.SaveChangesAsync();
 
-
                 return RedirectToAction("Index", "Home"); // This line is unreachable.
-
             }
             catch (Exception ex)
             {

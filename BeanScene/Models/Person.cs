@@ -8,14 +8,11 @@ namespace BeanScene.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; } // Primary key for Person
-
-        public string? UserId { get; set; } // Nullable FK to IdentityUser
+        public int Id { get; set; }
+        public string? UserId { get; set; }
 
         [ForeignKey("UserId")]
-        public IdentityUser? User { get; set; } // Navigation property to IdentityUser
-
-        //  properties specific to Person
+        public IdentityUser? User { get; set; }
         public string? Name { get; set; }
         public  string? Phone { get; set; }
         public  string? Email { get; set; }

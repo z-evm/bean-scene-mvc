@@ -7,8 +7,7 @@ namespace BeanScene.Models;
 
 public class RestaurantArea
 {
-
     public int Id { get; set; }
     public string Name { get; set; } =default!;
-    public List<RestaurantTable> Tables { get; set; } = new(); //restarant table can be many table such as Main = M1,M2,M3
+    public List<RestaurantTable> Tables { get; set; } = new();
 }

@@ -33,7 +33,7 @@ namespace BeanScene
             SeedRestaurantData(context);
         }
 
-       private static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
+        private static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
         {
             var roles = new[]
             {
@@ -58,7 +58,6 @@ namespace BeanScene
                 }
             }
         }
-
 
         private static async Task SeedUsersAsync(UserManager<IdentityUser> userManager)
         {
@@ -179,8 +178,6 @@ namespace BeanScene
                 Console.WriteLine("Reservation Statuses Seeded.");
             }
 
-
-
             if (!context.Reservations.Any())
             {
                 Console.WriteLine("Seeding Reservations with Persons...");
@@ -226,11 +223,6 @@ namespace BeanScene
                     Tables = new List<RestaurantTable> { mainTable }
                 };
 
-
-
-
-
-
                 // Create or Retrieve the Person
                 var alex = context.Persons.FirstOrDefault(p => p.Email == "alex@BeanScene");
                 if (alex == null)
@@ -259,10 +251,6 @@ namespace BeanScene
                     ReservationStatusId = reservationStatus.Id,
                     Tables = new List<RestaurantTable> { mainTable }
                 };
-
-
-
-
 
                 // Create or Retrieve the Person
                 var zack = context.Persons.FirstOrDefault(p => p.Email == "zack@BeanScene");
@@ -293,14 +281,13 @@ namespace BeanScene
                     Tables = new List<RestaurantTable> { mainTable }
                 };
 
-
                 context.Reservations.Add(reservationRamazan);
                 context.Reservations.Add(reservationAlex);
                 context.Reservations.Add(reservationZack);
                 context.SaveChanges();
                 Console.WriteLine("Reservatio");
 
-                    }
-                }
-    }
+            }
+        }
+    } 
 }

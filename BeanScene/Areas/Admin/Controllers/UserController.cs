@@ -27,7 +27,7 @@ namespace BeanScene.Areas.Admin.Controllers
 
             if (!string.IsNullOrEmpty(email))
             {
-                users = users.Where(u => u.Email != null && u.Email.Contains(email, StringComparison.OrdinalIgnoreCase)).ToList();
+                users = users.Where(u => u.Email!.Contains(email, StringComparison.OrdinalIgnoreCase)).ToList();
             }
 
             var userList = new List<dynamic>();
@@ -36,8 +36,8 @@ namespace BeanScene.Areas.Admin.Controllers
                 var roles = await _userManager.GetRolesAsync(user);
                 userList.Add(new
                 {
-                    UserId = user.Id,
-                    Email = user.Email,
+                    user.Id,
+                    user.Email,
                     CurrentRoles = string.Join(", ", roles)
                 });
             }
@@ -94,7 +94,7 @@ namespace BeanScene.Areas.Admin.Controllers
 
             if (!string.IsNullOrEmpty(email))
             {
-                users = users.Where(u => u.Email != null && u.Email.Contains(email, StringComparison.OrdinalIgnoreCase)).ToList();
+                users = users.Where(u => u.Email!.Contains(email, StringComparison.OrdinalIgnoreCase)).ToList();
             }
 
             var userList = new List<dynamic>();
@@ -105,8 +105,8 @@ namespace BeanScene.Areas.Admin.Controllers
                 {
                     userList.Add(new
                     {
-                        UserId = user.Id,
-                        Email = user.Email,
+                        user.Id,
+                        user.Email,
                         CurrentRoles = string.Join(", ", roles)
                     });
                 }
@@ -123,7 +123,7 @@ namespace BeanScene.Areas.Admin.Controllers
 
             if (!string.IsNullOrEmpty(email))
             {
-                users = users.Where(u => u.Email != null && u.Email.Contains(email, StringComparison.OrdinalIgnoreCase)).ToList();
+                users = users.Where(u => u.Email!.Contains(email, StringComparison.OrdinalIgnoreCase)).ToList();
             }
 
             var userList = new List<dynamic>();
@@ -134,8 +134,8 @@ namespace BeanScene.Areas.Admin.Controllers
                 {
                     userList.Add(new
                     {
-                        UserId = user.Id,
-                        Email = user.Email,
+                        user.Id,
+                        user.Email,
                         CurrentRoles = string.Join(", ", roles)
                     });
                 }
@@ -153,7 +153,7 @@ namespace BeanScene.Areas.Admin.Controllers
 
             if (!string.IsNullOrEmpty(email))
             {
-                users = users.Where(u => u.Email != null && u.Email.Contains(email, StringComparison.OrdinalIgnoreCase)).ToList();
+                users = users.Where(u => u.Email!.Contains(email, StringComparison.OrdinalIgnoreCase)).ToList();
             }
 
             var adminAndStaffList = new List<dynamic>();
@@ -164,8 +164,8 @@ namespace BeanScene.Areas.Admin.Controllers
                 {
                     adminAndStaffList.Add(new
                     {
-                        UserId = user.Id,
-                        Email = user.Email,
+                        user.Id,
+                        user.Email,
                         CurrentRoles = string.Join(", ", roles)
                     });
                 }
@@ -189,9 +189,9 @@ namespace BeanScene.Areas.Admin.Controllers
 
             var model = new
             {
-                UserId = user.Id,
-                Email = user.Email,
-                Roles = roles,
+                user.Id,
+                user.Email,
+                roles,
                 CurrentRoles = currentRoles
             };
 
