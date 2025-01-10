@@ -1,13 +1,7 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BeanScene.Data;
 using BeanScene.Models;
-using Microsoft.Extensions.Logging;
-using System.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 
 namespace BeanScene.Controllers

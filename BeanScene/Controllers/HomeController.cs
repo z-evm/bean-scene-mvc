@@ -2,7 +2,6 @@
 using BeanScene.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace BeanScene.Controllers
 {
@@ -48,7 +47,6 @@ namespace BeanScene.Controllers
                     return result;
                 }
             }
-
             return View();
         }
 
@@ -114,7 +112,6 @@ namespace BeanScene.Controllers
                 _context.Persons.Add(person);
                 await _context.SaveChangesAsync();
             }
-
             return Ok();
         }
     }
