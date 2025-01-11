@@ -27,7 +27,7 @@ namespace BeanScene.Controllers
             _logger.LogInformation("Index action called.");
 
             // Ensure required roles exist
-            foreach (string r in new[] { "Manager", "Admin", "Staff", "Member" })
+            foreach (string r in new[] { "Manager", "Staff", "Member" })
             {
                 if (!await _roleManager.RoleExistsAsync(r))
                 {
@@ -40,6 +40,21 @@ namespace BeanScene.Controllers
             if (User.Identity!.IsAuthenticated)
             {
                 _logger.LogInformation("User is authenticated.");
+
+                // Redirect staff users to the Reservations page
+                if (User.IsInRole("Staff"))
+                {
+                    _logger.LogInformation("User is in Staff role, redirecting to Reservations page.");
+                    return RedirectToAction("Search", "Reservation");
+                }
+
+                // Redirect manager users to the Reservations page
+                if(User.IsInRole("Manager"))
+                {
+                    _logger.LogInformation("User is in Manager role, redirecting to Reservations page.");
+                    return RedirectToAction("Search", "Reservation");
+                }
+
                 var result = await EnsurePersonAssociation();
                 if (result is UnauthorizedResult || result is NotFoundResult)
                 {

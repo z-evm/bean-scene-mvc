@@ -20,40 +20,37 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a> 
-                        </li>
-                        @if (User.IsInRole("Admin") || User.IsInRole("Manager")){
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Reservation" asp-action="Search">Reservations </a>
-                        </li>
-                        }
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Menu" asp-action="Index">Menu</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Contact" asp-action="Index">Contact Us</a>
-                        </li>
-                        @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                        @if (User?.Identity?.IsAuthenticated != true || User.IsInRole("Member"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Staff" asp-controller="StaffArea" asp-action="Index">Staff</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                             </li>
                             <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="admin" asp-controller="Sittings" asp-action="Index">Admin</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Menu" asp-action="Index">Menu</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Reservation" asp-action="Create">Make a Reservation</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Contact" asp-action="Index">Contact Us</a>
                             </li>
                         }
-                        else if (User.IsInRole("Staff"))
+                        @if (User?.IsInRole("Manager") == true)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Staff" asp-controller="StaffArea" asp-action="Index">Staff</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Reservation" asp-action="Search">Reservations</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="admin" asp-controller="Sittings" asp-action="Index">Sittings</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="admin" asp-controller="Users" asp-action="Index">Users</a>
                             </li>
                         }
-                        else if (User.IsInRole("Member"))
+                        @if (User?.IsInRole("Staff") == true)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="UserReservation" asp-action="Index">Reservation History</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Reservation" asp-action="Search">Reservations</a>
                             </li>
                         }
                     </ul>
@@ -70,7 +67,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2024 - BeanScene - Powered By Gelos</a>
+            <a>&copy; 2024 - BeanScene - Powered By Gelos</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -81,7 +78,7 @@
 </html>
 
 <style>
-    .footer={
-     align-self:;   
+    .footer {
+     align-self: auto;   
     }
 </style>
