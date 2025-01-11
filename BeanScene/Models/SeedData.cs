@@ -68,10 +68,10 @@ namespace BeanScene
             logger.LogInformation("Seeding Users...");
             var users = new[]
             {
-                    new { Email = "member@BeanScene", Password = "111111", Role = "Member" },
-                    new { Email = "admin@BeanScene", Password = "111111", Role = "Admin" },
-                    new { Email = "staff@BeanScene", Password = "111111", Role = "Staff" },
-                    new { Email = "manager@BeanScene", Password = "111111", Role = "Manager" }
+                    new { Email = "member@beanscene.com", Password = "password", Role = "Member" },
+                    new { Email = "admin@beanscene.com", Password = "password", Role = "Admin" },
+                    new { Email = "staff@beanscene.com", Password = "password", Role = "Staff" },
+                    new { Email = "manager@beanscene.com", Password = "password", Role = "Manager" }
                 };
 
             foreach (var userData in users)
@@ -98,7 +98,7 @@ namespace BeanScene
 
         private static async Task SeedRestaurantDataAsync(ApplicationDbContext context, ILogger logger)
         {
-            logger.LogInformation("Seeding Restaurants...");
+            logger.LogInformation("Seeding Restaurant...");
             if (!await context.Restaurants.AnyAsync())
             {
                 var restaurant = new Restaurant("Bean Scene Cafe")

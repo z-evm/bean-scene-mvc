@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using BeanScene.Data;
 using BeanScene;
-using BeanScene.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
