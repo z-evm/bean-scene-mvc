@@ -46,14 +46,14 @@ This is an MVC-based reservation system for the Bean Scene restaurant, developed
 
 The system seeds the following default user accounts during the initial setup:
   - **Admin Account**
-      - Email: admin@BeanScene
-      - Password: 111111
+      - Email: admin@beanscene.com
+      - Password: password
   - **Staff Account**
-      - Email: staff@BeanScene
-      - Password: 111111
+      - Email: staff@beanscene.com
+      - Password: password
   - **Manager Account**
-      - Email: manager@BeanScene
-      - Password: 111111
+      - Email: manager@beanscene.com
+      - Password: password
 
 ### License
 
