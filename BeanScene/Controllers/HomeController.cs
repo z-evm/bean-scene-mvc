@@ -55,6 +55,12 @@ namespace BeanScene.Controllers
                     return RedirectToAction("Search", "Reservation");
                 }
 
+                if(User.IsInRole("Admin"))
+                {
+                    _logger.LogInformation("User is in Manager role, redirecting to Reservations page.");
+                    return RedirectToAction("Search", "Reservation");
+                }
+
                 var result = await EnsurePersonAssociation();
                 if (result is UnauthorizedResult || result is NotFoundResult)
                 {
