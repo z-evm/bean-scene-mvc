@@ -6,60 +6,84 @@
 <p class="lead text-center">Bean Scene is a family-friendly restaurant located in Sydney, Australia. Founded by brothers James and Max Smith in 2018, we specialize in serving affordable and delicious food made from fresh, locally-sourced ingredients.</p>
 <p class="text-center">Open all day from breakfast to dinner, Bean Scene is a popular venue for events and parties. Our commitment to the community and long-term relationships with our customers and suppliers is reflected in our menu, which features meat and vegetables from local suppliers.</p>
 <br />
-<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-    <div class="carousel-inner">
-        <div class="carousel-item active">
-            <img src="../images/avocado-toast.png" class="d-block w-100" alt="Avocado Toast">
+
+<div class="carousel-text-container">
+    <div id="carouselIndicators" class="carousel slide flex-carousel" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="../images/avocado-toast.png" class="d-block w-100" alt="Avocado Toast">
+            </div>
+            <div class="carousel-item">
+                <img src="../images/pancakes-with-maple-syrup.png" class="d-block w-100" alt="Pancakes with Maple Syrup">
+            </div>
+            <div class="carousel-item">
+                <img src="../images/caesar-salad.png" class="d-block w-100" alt="Caesar Salad">
+            </div>
+            <div class="carousel-item">
+                <img src="../images/grilled-chicken-wrap.png" class="d-block w-100" alt="Grilled Chicken Wrap">
+            </div>
+            <div class="carousel-item">
+                <img src="../images/spaghetti-carbonara.png" class="d-block w-100" alt="Spaghetti Carbonara">
+            </div>
+            <div class="carousel-item">
+                <img src="../images/steak-with-garlic-butter.png" class="d-block w-100" alt="Steak with Garlic Butter">
+            </div>
         </div>
-        <div class="carousel-item">
-            <img src="../images/pancakes-with-maple-syrup.png" class="d-block w-100" alt="Pancakes with Maple Syrup">
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselIndicators" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselIndicators" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+    <div class="carousel-text">
+        <div class="carousel-text-item active">
+            <h2>Mission</h2>
+            <ul class="list-unstyled">
+                <li>To provide excellent service while serving exceptional quality and delicious food at a reasonable price.</li>
+                <li>To improve customer experience by constantly enhancing our efficiency in receiving, processing, and serving orders.</li>
+                <li>To maintain sustainable growth and relationships with our stakeholders.</li>
+                <li>To promote continuous improvement in a happy and healthy work environment.</li>
+            </ul>
         </div>
-        <div class="carousel-item">
-            <img src="../images/caesar-salad.png" class="d-block w-100" alt="Caesar Salad">
+        <div class="carousel-text-item">
+            <h2>Vision</h2>
+            <ul class="list-unstyled">
+                <li>To provide affordable and delicious meals that suit the everyday busy lifestyle.</li>
+            </ul>
         </div>
-        <div class="carousel-item">
-            <img src="../images/grilled-chicken-wrap.png" class="d-block w-100" alt="Grilled Chicken Wrap">
-        </div>
-        <div class="carousel-item">
-            <img src="../images/spaghetti-carbonara.png" class="d-block w-100" alt="Spaghetti Carbonara">
-        </div>
-        <div class="carousel-item">
-            <img src="../images/steak-with-garlic-butter.png" class="d-block w-100" alt="Steak with Garlic Butter">
+        <div class="carousel-text-item">
+            <h2>Core Values</h2>
+            <ul class="list-unstyled">
+                <li>Hospitality and quality</li>
+                <li>Community and family</li>
+                <li>Consistency and efficiency</li>
+                <li>Purpose and growth</li>
+            </ul>
         </div>
     </div>
-    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-    </button>
 </div>
 <br />
-<div class="row text-center">
-    <div class="col-md-4">
-        <h2>Vision</h2>
-        <ul class="list-unstyled">
-            <li>To provide affordable and delicious meals that suit the everyday busy lifestyle.</li>
-        </ul>
-    </div>
-    <div class="col-md-4">
-        <h2>Mission</h2>
-        <ul class="list-unstyled">
-            <li>To provide excellent service while serving exceptional quality and delicious food at a reasonable price.</li>
-            <li>To improve customer experience by constantly enhancing our efficiency in receiving, processing, and serving orders.</li>
-            <li>To maintain sustainable growth and relationships with our stakeholders.</li>
-            <li>To promote continuous improvement in a happy and healthy work environment.</li>
-        </ul>
-    </div>
-    <div class="col-md-4">
-        <h2>Core Values</h2>
-        <ul class="list-unstyled">
-            <li>Hospitality and quality</li>
-            <li>Community and family</li>
-            <li>Consistency and efficiency</li>
-            <li>Purpose and growth</li>
-        </ul>
-    </div>
-</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var carousel = document.querySelector('#carouselIndicators');
+            var textItems = document.querySelectorAll('.carousel-text-item');
+
+            carousel.addEventListener('slid.bs.carousel', function (event) {
+                var activeIndex = event.to;
+                textItems.forEach(function (item, index) {
+                    if (index === activeIndex) {
+                        item.classList.add('active');
+                    } else {
+                        item.classList.remove('active');
+                    }
+                });
+            });
+        });
+    </script>
+}
+

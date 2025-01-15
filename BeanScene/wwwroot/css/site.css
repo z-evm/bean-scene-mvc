@@ -100,3 +100,39 @@ footer {
 .searchButton:hover {
     background-color: #3a8a99; /* Slightly darker blue on hover */
 }
+
+/* Flexbox for carousel and text area */
+.carousel-text-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px; /* Adjust the gap between carousel and text area */
+}
+
+.flex-carousel {
+    flex: 1;
+    max-width: 50%; /* Adjust the width of the carousel */
+}
+
+.carousel-text {
+    flex: 1;
+    max-width: 50%; /* Adjust the width of the text area */
+}
+
+.carousel-text-item {
+    display: none;
+}
+
+.carousel-text-item.active {
+    display: block;
+}
+
+.carousel-text h2, .carousel-text ul {
+    color: var(--bean-dark-blue);
+}
+
+.carousel-item.active ~ .carousel-text .carousel-text-item:nth-child(1),
+.carousel-item:nth-child(2).active ~ .carousel-text .carousel-text-item:nth-child(2),
+.carousel-item:nth-child(3).active ~ .carousel-text .carousel-text-item:nth-child(3) {
+    display: block;
+}
