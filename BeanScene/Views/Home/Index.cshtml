@@ -2,31 +2,33 @@
     ViewData["Title"] = "Home Page";
 }
 
-<h1 class="display-4 text-center my-4">Welcome to Bean Scene</h1>
-<p class="lead text-center">Bean Scene is a family-friendly restaurant located in Sydney, Australia. Founded by brothers James and Max Smith in 2018, we specialize in serving affordable and delicious food made from fresh, locally-sourced ingredients.</p>
-<p class="text-center">Open all day from breakfast to dinner, Bean Scene is a popular venue for events and parties. Our commitment to the community and long-term relationships with our customers and suppliers is reflected in our menu, which features meat and vegetables from local suppliers.</p>
+<h1 id="title" class="display-4 text-center my-4";">WELCOME TO BEAN SCENE</h1>
+<p class="lead text-center">Bean Scene is a family-friendly restaurant located in Sydney. Founded by brothers James and Max Smith in 2018, 
+    <br />we specialize in serving affordable and delicious food made from fresh, locally-sourced ingredients.</p>
+<p class="lead text-center">Open all day from breakfast to dinner, Bean Scene is a popular venue for events and parties. 
+    <br />Our commitment to the community, our customers and suppliers is reflected in our menu, <br />which features meat and vegetables from local suppliers.</p>
 <br />
 
 <div class="carousel-text-container">
-    <div id="carouselIndicators" class="carousel slide flex-carousel" data-bs-ride="carousel">
+    <div id="carouselIndicators" class="carousel slide flex-carousel" data-bs-ride="carousel" data-bs-interval="4000">
         <div class="carousel-inner">
             <div class="carousel-item active">
-                <img src="../images/avocado-toast.png" class="d-block w-100" alt="Avocado Toast">
+                <img src="../images/avocado-toast.png" class="d-block w-100 rounded-image" alt="Avocado Toast">
             </div>
             <div class="carousel-item">
-                <img src="../images/pancakes-with-maple-syrup.png" class="d-block w-100" alt="Pancakes with Maple Syrup">
+                <img src="../images/pancakes-with-maple-syrup.png" class="d-block w-100 rounded-image" alt="Pancakes with Maple Syrup">
             </div>
             <div class="carousel-item">
-                <img src="../images/caesar-salad.png" class="d-block w-100" alt="Caesar Salad">
+                <img src="../images/caesar-salad.png" class="d-block w-100 rounded-image" alt="Caesar Salad">
             </div>
             <div class="carousel-item">
-                <img src="../images/grilled-chicken-wrap.png" class="d-block w-100" alt="Grilled Chicken Wrap">
+                <img src="../images/grilled-chicken-wrap.png" class="d-block w-100 rounded-image" alt="Grilled Chicken Wrap">
             </div>
             <div class="carousel-item">
-                <img src="../images/spaghetti-carbonara.png" class="d-block w-100" alt="Spaghetti Carbonara">
+                <img src="../images/spaghetti-carbonara.png" class="d-block w-100 rounded-image" alt="Spaghetti Carbonara">
             </div>
             <div class="carousel-item">
-                <img src="../images/steak-with-garlic-butter.png" class="d-block w-100" alt="Steak with Garlic Butter">
+                <img src="../images/steak-with-garlic-butter.png" class="d-block w-100 rounded-image" alt="Steak with Garlic Butter">
             </div>
         </div>
         <button class="carousel-control-prev" type="button" data-bs-target="#carouselIndicators" data-bs-slide="prev">
@@ -40,27 +42,31 @@
     </div>
     <div class="carousel-text">
         <div class="carousel-text-item active">
-            <h2>Mission</h2>
-            <ul class="list-unstyled">
-                <li>To provide excellent service while serving exceptional quality and delicious food at a reasonable price.</li>
-                <li>To improve customer experience by constantly enhancing our efficiency in receiving, processing, and serving orders.</li>
+            <h2 class="mission-title">Mission</h2>
+            <ul class="list-unstyled spaced-list">
+                <li>To provide excellent service while serving exceptional <br />quality and delicious food at a reasonable price.</li>
+                <li>To improve customer experience by constantly enhancing our <br />efficiency in receiving, processing, and serving orders.</li>
                 <li>To maintain sustainable growth and relationships with our stakeholders.</li>
                 <li>To promote continuous improvement in a happy and healthy work environment.</li>
             </ul>
         </div>
         <div class="carousel-text-item">
-            <h2>Vision</h2>
-            <ul class="list-unstyled">
+            <h2 class="vision-title">Vision</h2>
+            <ul class="list-unstyled spaced-list">
                 <li>To provide affordable and delicious meals that suit the everyday busy lifestyle.</li>
+                <li>To be a leading restaurant known for exceptional quality and service.</li>
+                <li>To create a welcoming environment for all customers.</li>
+                <li>To innovate and adapt to the changing needs of our customers.</li>
+                <li>To support and give back to the local community.</li>
             </ul>
         </div>
         <div class="carousel-text-item">
-            <h2>Core Values</h2>
-            <ul class="list-unstyled">
-                <li>Hospitality and quality</li>
-                <li>Community and family</li>
-                <li>Consistency and efficiency</li>
-                <li>Purpose and growth</li>
+            <h2 class="core-values-title">Core Values</h2>
+            <ul class="list-unstyled spaced-list">
+                <li>Hospitality and Quality</li>
+                <li>Community and Family</li>
+                <li>Consistency and Efficiency</li>
+                <li>Purpose and Growth</li>
             </ul>
         </div>
     </div>
@@ -72,18 +78,23 @@
         document.addEventListener('DOMContentLoaded', function () {
             var carousel = document.querySelector('#carouselIndicators');
             var textItems = document.querySelectorAll('.carousel-text-item');
+            var rotationCount = 0;
 
             carousel.addEventListener('slid.bs.carousel', function (event) {
                 var activeIndex = event.to;
-                textItems.forEach(function (item, index) {
-                    if (index === activeIndex) {
-                        item.classList.add('active');
-                    } else {
-                        item.classList.remove('active');
-                    }
-                });
+                rotationCount++;
+
+                if (rotationCount % 2 === 0) {
+                    var textIndex = Math.floor(activeIndex / 2);
+                    textItems.forEach(function (item, index) {
+                        if (index === textIndex) {
+                            item.classList.add('active');
+                        } else {
+                            item.classList.remove('active');
+                        }
+                    });
+                }
             });
         });
     </script>
 }
-

@@ -121,10 +121,34 @@ footer {
 
 .carousel-text-item {
     display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%; /* Adjust as needed */
+    text-align: center;
 }
 
 .carousel-text-item.active {
-    display: block;
+    display: flex;
+}
+
+.mission-title {
+    margin-top: 20px;
+    font-style: italic;
+}
+
+.vision-title {
+    margin-top: 8px;
+    font-style: italic;
+}
+
+.core-values-title {
+    margin-top: -27px;
+    font-style: italic;
+}
+
+.spaced-list li {
+    margin-bottom: 10px; /* Adjust the value as needed */
 }
 
 .carousel-text h2, .carousel-text ul {
@@ -135,4 +159,8 @@ footer {
 .carousel-item:nth-child(2).active ~ .carousel-text .carousel-text-item:nth-child(2),
 .carousel-item:nth-child(3).active ~ .carousel-text .carousel-text-item:nth-child(3) {
     display: block;
+}
+
+.rounded-image {
+    border-radius: 15px; /* Adjust the value as needed */
 }
