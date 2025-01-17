@@ -107,6 +107,7 @@ footer {
     justify-content: center;
     align-items: center;
     gap: 20px; /* Adjust the gap between carousel and text area */
+    margin-bottom: 30px;
 }
 
 .flex-carousel {
@@ -163,4 +164,15 @@ footer {
 
 .rounded-image {
     border-radius: 15px; /* Adjust the value as needed */
+}
+
+.banner img {
+    width: 100%;
+    height: auto;
+    margin-bottom: 30px;
+}
+
+.stylish-paragraph {
+    border-radius: 10px;
+    line-height: 1.6;
 }

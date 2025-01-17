@@ -1,9 +1,9 @@
 ﻿
 @{
-    ViewData["Title"] = "Menu";
+    ViewData["Title"] = "Our Menu";
 }
 
-<h1>@ViewData["Title"]</h1>
+<h1 class="mb-4">@ViewData["Title"]</h1>
 <h2>Breakfast</h2>
 <div class="row menulist">
     <div class="col-md-4">
@@ -124,39 +124,103 @@
     </div>
 </div>
 <br/>
-<div class="row menulist">
-    <div class="col-md-4 left">
+<div class="menu-list row mb-4 d-flex justify-content-center">
+    <div class="col-md-4 text-center">
         <h2>Coffee</h2>
         <div class="row">
-            <p>Espresso / Piccolo - $3.50</p>
-            <p>Flat White - $4.50</p>
-            <p>Cappucino - $4.50</p>
-            <p>Long Black - $4.50</p>
-            <p>Chai Latte - $4.50</p>
-            <p>Hot Chocolate - $4.50</p>
-            <p>Mocha - $4.50</p>
-            <p>Dirty Latte - $4.50</p>
-            <p>Matcha Latte - $4.50</p>
+            <div class="d-flex justify-content-between w-100">
+                <p>Espresso / Piccolo</p>
+                <p>$3.50</p>
+            </div>
+            <div class="d-flex justify-content-between w-100">
+                <p>Flat White</p>
+                <p>$4.50</p>
+            </div>
+            <div class="d-flex justify-content-between w-100">
+                <p>Cappucino</p>
+                <p>$4.50</p>
+            </div>
+            <div class="d-flex justify-content-between w-100">
+                <p>Long Black</p>
+                <p>$4.50</p>
+            </div>
+            <div class="d-flex justify-content-between w-100">
+                <p>Chai Latte</p>
+                <p>$4.50</p>
+            </div>
+            <div class="d-flex justify-content-between w-100">
+                <p>Mocha</p>
+                <p>$4.50</p>
+            </div>
         </div>
     </div>
-    <div class="col-md-4 left">
+    <div class="col-md-4 text-center">
         <h2>Tea</h2>
         <div class="row">
-            <p>English Breakfast - $4.50</p>
-            <p>Green - $3.50</p>
-            <p>Lemon Ginger - $3.50</p>
-            <p>Peppermint - $3.50</p>
-            <p>Earl Grey - $4.50</p>
+            <div class="d-flex justify-content-between w-100">
+                <p>English Breakfast</p>
+                <p>$4.50</p>
+            </div>
+            <div class="d-flex justify-content-between w-100">
+                <p>Green</p>
+                <p>$3.50</p>
+            </div>
+            <div class="d-flex justify-content-between w-100">
+                <p>Lemon Ginger</p>
+                <p>$3.50</p>
+            </div>
+            <div class="d-flex justify-content-between w-100">
+                <p>Peppermint</p>
+                <p>$3.50</p>
+            </div>
+            <div class="d-flex justify-content-between w-100">
+                <p>Earl Grey</p>
+                <p>$4.50</p>
+            </div>
+            <div class="d-flex justify-content-between w-100">
+                <p>Oolong</p>
+                <p>$5.00</p>
+            </div>
         </div>
     </div>
-    <div class="col-md-4 left">
-        <h2>Other Drinks</h2>
+    <div class="col-md-4 text-center">
+        <h2>Beverages</h2>
         <div class="row">
-            <p>Coke - $3.00</p>
-            <p>Lemonade - $3.00</p>
-            <p>Juice (Orange, Apple, Cranberry) - $3.00</p>
-            <p>Lemon Lime Bitters - $3.00</p>
+            <div class="d-flex justify-content-between w-100">
+                <p>Coke</p>
+                <p>$3.00</p>
+            </div>
+            <div class="d-flex justify-content-between w-100">
+                <p>Lemonade</p>
+                <p>$3.00</p>
+            </div>
+            <div class="d-flex justify-content-between w-100">
+                <p>Lemon Lime Bitters</p>
+                <p>$3.50</p>
+            </div>
+            <div class="d-flex justify-content-between w-100">
+                <p>Fresh Juice</p>
+                <p>$4.50</p>
+            </div>
+            <div class="d-flex justify-content-between w-100">
+                <p>Milkshakes</p>
+                <p>6.00</p>
+            </div>
+            <div class="d-flex justify-content-between w-100">
+                <p>Kombucha</p>
+                <p>$5.00</p>
+            </div>
         </div>
     </div>
 </div>
 
+<div class="d-flex justify-content-center my-4">
+    <button class="btn btn-lg btn-primary mb-4" onclick="downloadMenu()">Download Menu</button>
+</div>
+
+<script>
+    function downloadMenu() {
+        alert("Menu download initiated!");
+        // Add logic to download the menu here
+    }
+</script>
