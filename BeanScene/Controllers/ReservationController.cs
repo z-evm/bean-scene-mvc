@@ -20,13 +20,6 @@ namespace BeanScene.Controllers
             _userManager = userManager;
         }
 
-        // GET: /Reservation/Search
-        [HttpGet]
-        public IActionResult Search()
-        {
-            return View();
-        }
-
         // POST: /Reservation/Search
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -88,6 +81,13 @@ namespace BeanScene.Controllers
             return View("TimeSlotList");
         }
 
+        // GET: /Reservation/Search
+        [HttpGet]
+        public IActionResult Search()
+        {
+            return View();
+        }
+
         // GET: /Reservation/Book
         public async Task<IActionResult> Book(int sittingId, int guests, DateTime selectedTimeSlot)
         {
@@ -133,7 +133,7 @@ namespace BeanScene.Controllers
             ViewBag.Guests = guests;
             ViewBag.SelectedTimeSlot = selectedTimeSlot;
 
-            return View(new Reservation
+            return View("Book", new Reservation
             {
                 Start = selectedTimeSlot,
                 Pax = guests,
@@ -223,7 +223,7 @@ namespace BeanScene.Controllers
             {
                 _logger.LogError(ex, "Error booking reservation.");
                 ModelState.AddModelError("", "Unexpected error occurred.");
-                return View(reservation);
+                return View("Book", reservation);
             }
         }
     }
