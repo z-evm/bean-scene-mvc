@@ -2,15 +2,66 @@
     ViewData["Title"] = "Contact Us";
 }
 
-<div class="row">
-    <div class="col-md-6">
-        <h1>@ViewData["Title"]</h1>
-        <p><strong>Address:</strong> 123 Bean Scene Street, Sydney NSW 2000</p>
-        <p><strong>Phone:</strong> (02) 9999 BEAN ((02) 9999 2326)</p>
-        <p><strong>Email:</strong> enquiries@beanscene.com.au</p>
-    </div>
-    <div class="col-md-6">
-        <h2>Map</h2>
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d424141.6978944982!2d150.93197474999997!3d-33.84824395!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6b129838f39a743f%3A0x3017d681632a850!2sSydney%20NSW!5e0!3m2!1sen!2sau!4v1731549306798!5m2!1sen!2sau" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+<h1 class="mb-3">@ViewData["Title"]</h1>
+<div class="container mb-2 position-relative">
+    <img src="~/images/outdoor-patio-cafe.jpg" class="img-fluid rounded" style="margin-bottom: 20px;" alt="Outdoor Patio Cafe">
+    <div class="overlay-text-box position-absolute top-50 start-0 translate-middle-y p-3 text-dark rounded">
+        <div class="row">
+            <div class="col-12 text-center">
+                <p class="lead">WE ARE LOCATED AT <br />123 COFFEE ST, SYDNEY 2000</p>
+            </div>
+            <div class="col-12 text-center">
+                <p class="lead">Call us on: 12345678</p>
+            </div>
+            <div class="col-12 text-center">
+                <p class="lead">Email <br />contact@beanscene.com.au</p>
+            </div>
+            <div class="col-12 text-center">
+                <p class="lead">Business Hours <br />Mon-Fri 8am - 6pm</p>
+            </div>
+            <div class="col-12 text-center">
+                <p class="lead">Follow us on</p>
+                <a href="https://facebook.com" class="me-2"><i class="fab fa-facebook"></i> Facebook</a>
+                <a href="https://twitter.com" class="me-2"><i class="fab fa-twitter"></i> Twitter</a>
+                <a href="https://instagram.com"><i class="fab fa-instagram"></i> Instagram</a>
+            </div>
+        </div>
     </div>
 </div>
+
+<style>
+    .overlay-text-box {
+        max-width: 30%;
+        background-color: rgba(255, 255, 255);
+        margin-left: 60px;
+        margin-top: -10px;
+    }
+</style>
+
+<div class="container pb-5">
+    <div class="row">
+        <div class="col-md-6">
+            <form class="contact-form">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="name" placeholder="Enter Your Name">
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" placeholder="Enter Your Email">
+                </div>
+                <div class="mb-3">
+                    <label for="message" class="form-label">Message</label>
+                    <textarea class="form-control" id="message" rows="5" placeholder="Enter Your Message"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Send</button>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d424141.6978944982!2d150.93197474999997!3d-33.84824395!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6b129838f39a743f%3A0x3017d681632a850!2sSydney%20NSW!5e0!3m2!1sen!2sau!4v1731549306798!5m2!1sen!2sau"
+                    style="width: 100%; height: 433px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">

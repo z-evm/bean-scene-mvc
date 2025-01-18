@@ -163,7 +163,7 @@ footer {
 }
 
 .rounded-image {
-    border-radius: 15px; /* Adjust the value as needed */
+    border-radius: 15px;
 }
 
 .banner img {
@@ -175,4 +175,29 @@ footer {
 .stylish-paragraph {
     border-radius: 10px;
     line-height: 1.6;
+}
+
+/* Contact Page Styles */
+.contact-form {
+    background-color: var(--bean-gold);
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.contact-form .form-label {
+    color: var(--bean-dark-blue);
+}
+
+.contact-form .form-control {
+    border: 1px solid var(--bean-dark-gold);
+}
+
+.contact-form .btn-primary {
+    background-color: var(--bean-dark-gold);
+    border-color: var(--bean-dark-gold);
+}
+
+.contact-form .btn-primary:hover {
+    background-color: var(--bean-gold);
+    border-color: var(--bean-gold);
 }
