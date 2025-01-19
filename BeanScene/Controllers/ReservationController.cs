@@ -20,6 +20,11 @@ namespace BeanScene.Controllers
             _userManager = userManager;
         }
 
+        public IActionResult MakeReservation()
+        {
+            return View();
+        }
+
         // POST: /Reservation/Search
         [HttpPost]
         [ValidateAntiForgeryToken]

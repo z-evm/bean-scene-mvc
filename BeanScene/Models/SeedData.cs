@@ -103,7 +103,7 @@ namespace BeanScene
             {
                 var restaurant = new Restaurant("Bean Scene Cafe")
                 {
-                    Location = "123 coffee St, Sydney",
+                    Location = "123 Coffee St, Sydney 2000",
                     RestaurantAreas = new List<RestaurantArea>
                     {
                         new RestaurantArea { Name = "Main" },
