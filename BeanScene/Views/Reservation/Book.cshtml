@@ -7,8 +7,8 @@
                 <button type="button" class="btn btn-secondary" onclick="goBack()">Go Back</button>
             </div>
 
+            // Script to handle navigation without form resubmission
             <script>
-                // Script to handle navigation without form resubmission
                 function goBack() {
                     const previousPage = document.referrer; // Refers to the last page
                     if (previousPage) {
@@ -21,7 +21,6 @@
 
             @{
                 var successMessage = TempData["SuccessMessage"] as string;
-                
             }
 
             @if (!string.IsNullOrEmpty(successMessage))
@@ -30,7 +29,6 @@
                     @successMessage
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-                
             }
 
             <h2 class="text-center mb-4">Confirm Your Booking</h2>

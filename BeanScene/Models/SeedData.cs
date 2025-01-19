@@ -33,11 +33,11 @@ namespace BeanScene
         {
             var roles = new[]
             {
-                    new { Name = "Member", ConcurrencyStamp = Guid.NewGuid().ToString() },
-                    new { Name = "Admin", ConcurrencyStamp = Guid.NewGuid().ToString() },
-                    new { Name = "Staff", ConcurrencyStamp = Guid.NewGuid().ToString() },
-                    new { Name = "Manager", ConcurrencyStamp = Guid.NewGuid().ToString() }
-                };
+                new { Name = "Member", ConcurrencyStamp = Guid.NewGuid().ToString() },
+                new { Name = "Admin", ConcurrencyStamp = Guid.NewGuid().ToString() },
+                new { Name = "Staff", ConcurrencyStamp = Guid.NewGuid().ToString() },
+                new { Name = "Manager", ConcurrencyStamp = Guid.NewGuid().ToString() }
+            };
 
             foreach (var roleData in roles)
             {
@@ -68,11 +68,11 @@ namespace BeanScene
             logger.LogInformation("Seeding Users...");
             var users = new[]
             {
-                    new { Email = "member@beanscene.com", Password = "password", Role = "Member" },
-                    new { Email = "admin@beanscene.com", Password = "password", Role = "Admin" },
-                    new { Email = "staff@beanscene.com", Password = "password", Role = "Staff" },
-                    new { Email = "manager@beanscene.com", Password = "password", Role = "Manager" }
-                };
+                new { Email = "member@beanscene.com", Password = "password", Role = "Member" },
+                new { Email = "admin@beanscene.com", Password = "password", Role = "Admin" },
+                new { Email = "staff@beanscene.com", Password = "password", Role = "Staff" },
+                new { Email = "manager@beanscene.com", Password = "password", Role = "Manager" }
+            };
 
             foreach (var userData in users)
             {
@@ -105,11 +105,11 @@ namespace BeanScene
                 {
                     Location = "123 coffee St, Sydney",
                     RestaurantAreas = new List<RestaurantArea>
-                        {
-                            new RestaurantArea { Name = "Main" },
-                            new RestaurantArea { Name = "Balcony" },
-                            new RestaurantArea { Name = "Outside" }
-                        }
+                    {
+                        new RestaurantArea { Name = "Main" },
+                        new RestaurantArea { Name = "Balcony" },
+                        new RestaurantArea { Name = "Outside" }
+                    }
                 };
 
                 context.Restaurants.Add(restaurant);
@@ -134,39 +134,40 @@ namespace BeanScene
             if (!await context.Sittings.AnyAsync())
             {
                 var restaurant = await context.Restaurants.FirstAsync();
+                var today = DateTime.Today;
                 context.Sittings.AddRange(new List<Sitting>
+                {
+                    new Sitting
                     {
-                        new Sitting
-                        {
-                            Name = "BREAKFAST",
-                            Start = DateTime.Today.AddHours(7),
-                            End = DateTime.Today.AddHours(11),
-                            Capacity = 40,
-                            Closed = false,
-                            Type = SittingType.Breakfast,
-                            RestaurantId = restaurant.Id
-                        },
-                        new Sitting
-                        {
-                            Name = "LUNCH",
-                            Start = DateTime.Today.AddHours(12),
-                            End = DateTime.Today.AddHours(16),
-                            Capacity = 40,
-                            Closed = false,
-                            Type = SittingType.Lunch,
-                            RestaurantId = restaurant.Id
-                        },
-                        new Sitting
-                        {
-                            Name = "DINNER",
-                            Start = DateTime.Today.AddHours(17),
-                            End = DateTime.Today.AddHours(22),
-                            Capacity = 40,
-                            Closed = false,
-                            Type = SittingType.Dinner,
-                            RestaurantId = restaurant.Id
-                        }
-                    });
+                        Name = "BREAKFAST",
+                        Start = today.AddHours(7),
+                        End = today.AddHours(11),
+                        Capacity = 40,
+                        Closed = false,
+                        Type = SittingType.Breakfast,
+                        RestaurantId = restaurant.Id
+                    },
+                    new Sitting
+                    {
+                        Name = "LUNCH",
+                        Start = today.AddHours(12),
+                        End = today.AddHours(16),
+                        Capacity = 40,
+                        Closed = false,
+                        Type = SittingType.Lunch,
+                        RestaurantId = restaurant.Id
+                    },
+                    new Sitting
+                    {
+                        Name = "DINNER",
+                        Start = today.AddHours(17),
+                        End = today.AddHours(22),
+                        Capacity = 40,
+                        Closed = false,
+                        Type = SittingType.Dinner,
+                        RestaurantId = restaurant.Id
+                    }
+                });
 
                 await context.SaveChangesAsync();
                 logger.LogInformation("Sittings Seeded.");
@@ -176,12 +177,12 @@ namespace BeanScene
             if (!await context.ReservationStatus.AnyAsync())
             {
                 context.ReservationStatus.AddRange(new List<ReservationStatus>
-                    {
-                        new ReservationStatus { Name = "Pending" },
-                        new ReservationStatus { Name = "Approved" },
-                        new ReservationStatus { Name = "Seated" },
-                        new ReservationStatus { Name = "Finished" }
-                    });
+                {
+                    new ReservationStatus { Name = "Pending" },
+                    new ReservationStatus { Name = "Approved" },
+                    new ReservationStatus { Name = "Seated" },
+                    new ReservationStatus { Name = "Finished" }
+                });
 
                 await context.SaveChangesAsync();
                 logger.LogInformation("Reservation Statuses Seeded.");
@@ -220,7 +221,7 @@ namespace BeanScene
                 }
 
                 // Add the Reservation
-                var reservationRamazan = new Reservation
+                var reservationJohn = new Reservation
                 {
                     Start = DateTime.Today.AddHours(8), // Today at 8:00 AM
                     Duration = 120, // 2 hours
@@ -243,13 +244,13 @@ namespace BeanScene
                         Email = "bob@beanscene.com"
                     };
 
-                    context.Persons.Add(bob); 
+                    context.Persons.Add(bob);
                     await context.SaveChangesAsync(); // Save to generate Person ID
                     logger.LogInformation("Person added: Bob.");
                 }
 
                 // Add the Reservation
-                var reservationAlex = new Reservation
+                var reservationBob = new Reservation
                 {
                     Start = DateTime.Today.AddHours(13), // Today at 1:00 PM
                     Duration = 120, // 2 hours
@@ -262,14 +263,14 @@ namespace BeanScene
                 };
 
                 // Create or Retrieve the Person
-                var alice = await context.Persons.FirstOrDefaultAsync(p => p.Email == "zack@BeanScene");
+                var alice = await context.Persons.FirstOrDefaultAsync(p => p.Email == "alice@beanscene.com");
                 if (alice == null)
                 {
                     alice = new Person
                     {
                         Name = "Alice",
                         Phone = "88443626",
-                        Email = "zack@beanscene.com"
+                        Email = "alice@beanscene.com"
                     };
 
                     context.Persons.Add(alice);
@@ -278,7 +279,7 @@ namespace BeanScene
                 }
 
                 // Add the Reservation
-                var reservationZack = new Reservation
+                var reservationAlice = new Reservation
                 {
                     Start = DateTime.Today.AddHours(17), // Today at 5:00 PM
                     Duration = 120, // 2 hours
@@ -290,7 +291,7 @@ namespace BeanScene
                     Tables = new List<RestaurantTable> { mainTable }
                 };
 
-                context.Reservations.AddRange(reservationRamazan, reservationAlex, reservationZack);
+                context.Reservations.AddRange(reservationJohn, reservationBob, reservationAlice);
                 await context.SaveChangesAsync();
                 logger.LogInformation("Reservations Seeded.");
             }
