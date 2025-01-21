@@ -1,0 +1,56 @@
+﻿<div id="reservation-view" class="position-relative mb-5 mt-4 rounded-lg" style="overflow: hidden; border-radius: 20px;">
+    <!-- Background Image -->
+    <img src="~/images/cafe-chairs-outdoors.jpg" class="img-fluid w-100" style="height: 100vh; object-fit: cover;" alt="Cafe Chairs Outside">
+
+    <!-- Overlay -->
+    <div id="reservation-overlay" class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="background-color: rgba(0, 0, 0, 0.6);">
+        <!-- Search Section -->
+        @if (ViewBag.TimeSlots == null && Model == null)
+        {
+            <div class="col-md-6 bg-light p-4 rounded shadow-lg">
+                <form asp-action="Search" method="post" class="p-4 rounded bg-light">
+                    @Html.AntiForgeryToken()
+
+                    <!-- Date Selection -->
+                    <div class="form-group mb-4">
+                        <label for="Date" class="form-label fw-bold">Date</label>
+                        <input type="date" id="Date" name="date" class="form-control form-control-lg" required aria-required="true" />
+                    </div>
+
+                    <!-- Time Selection -->
+                    <div class="form-group mb-4">
+                        <label for="timePicker" class="form-label fw-bold">Time</label>
+                        <select id="timePicker" name="time" class="form-select form-select-lg" required aria-required="true">
+                            @for (int hour = 7; hour < 22; hour++)
+                            {
+                                <option value="@hour:00">@hour.ToString("D2"):00</option>
+                                <option value="@hour:15">@hour.ToString("D2"):15</option>
+                                <option value="@hour:30">@hour.ToString("D2"):30</option>
+                                <option value="@hour:45">@hour.ToString("D2"):45</option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Number of Guests -->
+                    <div class="form-group mb-4">
+                        <label for="Guests" class="form-label fw-bold">Number of Guests</label>
+                        <input type="number" id="Guests" name="guests" class="form-control form-control-lg" required min="1" placeholder="Enter number of guests" aria-required="true" />
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">Search</button>
+                    </div>
+                </form>
+
+                <!-- Error Message -->
+                @if (!string.IsNullOrEmpty(ViewData["ErrorMessage"] as string))
+                {
+                    <div class="alert alert-danger mt-3">
+                        @ViewData["ErrorMessage"]
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

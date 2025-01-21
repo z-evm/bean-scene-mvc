@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - BeanScene</title>
+    <title>@ViewData["Title"] - Bean Scene</title>
     <link rel="stylesheet" href="~/lib/twitter-bootstrap/css/bootstrap.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/BeanScene.styles.css" asp-append-version="true" />
@@ -13,58 +13,48 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img class="logo" src="~/images/bean-scene-logo.png" alt="Bean Scene" title="Bean Scene"/></a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img class="logo" src="~/images/bean-scene-logo.png" alt="Bean Scene" title="Bean Scene" /></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        @if (User?.Identity?.IsAuthenticated != true || User.IsInRole("Member"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Menu" asp-action="Index">Menu</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Reservation" asp-action="MakeReservation">Make Reservation</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Contact" asp-action="Index">Contact Us</a>
-                            </li>
-                        }
-                        @if (User?.IsInRole("Admin") == true) {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Reservation" asp-action="Search">Reservations</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Sittings" asp-action="Index">Sittings</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
-                            </li>
-                        },
-                        @if (User?.IsInRole("Manager") == true)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Reservation" asp-action="Search">Reservations</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Sittings" asp-action="Index">Sittings</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
-                            </li>
-                        }
-                        @if (User?.IsInRole("Staff") == true)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Reservation" asp-action="Search">Reservations</a>
-                            </li>
-                        }
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Menu" asp-action="Index">Menu</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Reservation" asp-action="MakeReservation">Make Reservation</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Contact" asp-action="Index">Contact Us</a>
+                        </li>
+                        @* @if (User?.Identity?.IsAuthenticated ?? false) // Authenticated users *@
+                        @* { *@
+                        @*     @if (User.IsInRole("Admin") || User.IsInRole("Manager")) *@
+                        @*     { *@
+                        @*         <li class="nav-item"> *@
+                        @*             <a class="nav-link text-dark" asp-area="" asp-controller="Reservation" asp-action="Search">Reservations</a> *@
+                        @*         </li> *@
+                        @*         <li class="nav-item"> *@
+                        @*             <a class="nav-link text-dark" asp-area="" asp-controller="Sittings" asp-action="Index">Sittings</a> *@
+                        @*         </li> *@
+                        @*         <li class="nav-item"> *@
+                        @*             <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Users</a> *@
+                        @*         </li> *@
+                        @*     } *@
+                        @*     @if (User.IsInRole("Staff")) *@
+                        @*     { *@
+                        @*         <li class="nav-item"> *@
+                        @*             <a class="nav-link text-dark" asp-area="" asp-controller="Reservation" asp-action="Search">Reservations</a> *@
+                        @*         </li> *@
+                        @*     } *@
+                        @* } *@
                     </ul>
+
                     <partial name="_LoginPartial" />
                 </div>
             </div>
@@ -82,7 +72,7 @@
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/twitter-bootstrap/js/bootstrap.js"></script>
+    <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
@@ -90,6 +80,6 @@
 
 <style>
     .footer {
-     align-self: auto;   
+        align-self: auto;
     }
 </style>

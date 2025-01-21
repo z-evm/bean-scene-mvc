@@ -210,10 +210,6 @@ footer {
 }
 
 /* Reservation Styles */
-body {
-    background-color: #f8f9fa;
-}
-
 h2 {
     font-size: 2rem;
     font-weight: bold;
@@ -353,3 +349,4 @@ h2 {
 button:focus {
     outline: none;
 }
+

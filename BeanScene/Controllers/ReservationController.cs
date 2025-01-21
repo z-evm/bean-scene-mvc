@@ -12,7 +12,6 @@ namespace BeanScene.Controllers
         private readonly ILogger<ReservationController> _logger;
         private readonly UserManager<IdentityUser> _userManager;
 
-        // Constructor to initialize the controller with dependencies
         public ReservationController(ApplicationDbContext context, ILogger<ReservationController> logger, UserManager<IdentityUser> userManager)
         {
             _context = context;
@@ -22,7 +21,7 @@ namespace BeanScene.Controllers
 
         public IActionResult MakeReservation()
         {
-            return View();
+            return View("Index");
         }
 
         // POST: /Reservation/Search
@@ -32,16 +31,14 @@ namespace BeanScene.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View("Search");
+                return View("Index");
             }
 
-            // Calculate the selected time and the range for searching sittings
             DateTime selectedTime = date.Date.Add(time);
             DateTime rangeStart = selectedTime.AddHours(-1);
             DateTime rangeEnd = selectedTime.AddHours(1);
 
-            // Find sittings within the specified range that are not closed
-            var sittings = await _context.Sittings 
+            var sittings = await _context.Sittings
                 .Include(s => s.Reservations)
                 .Where(s => s.Start <= rangeEnd && s.End >= rangeStart && !s.Closed)
                 .ToListAsync();
@@ -49,16 +46,15 @@ namespace BeanScene.Controllers
             if (!sittings.Any())
             {
                 ModelState.AddModelError("", "No sittings available within the specified range.");
-                return View("Search");
+                return View("Index");
             }
 
             var timeSlots = new List<(DateTime SlotStart, bool IsAvailable)>();
 
-            // Check availability of time slots within the sittings
             foreach (var sitting in sittings)
             {
                 DateTime currentTime = sitting.Start > rangeStart ? sitting.Start : rangeStart;
-                while (currentTime < sitting.End && currentTime < rangeEnd) 
+                while (currentTime < sitting.End && currentTime < rangeEnd)
                 {
                     var overlappingReservations = sitting.Reservations?
                         .Where(r => r.End > currentTime && r.Start < currentTime.AddMinutes(15)) ?? Enumerable.Empty<Reservation>();
@@ -74,23 +70,22 @@ namespace BeanScene.Controllers
             if (!timeSlots.Any())
             {
                 ModelState.AddModelError("", "No time slots available within the specified range.");
-                return View("Search");
+                return View("Index");
             }
 
-            // Pass the available time slots to the view
-            ViewBag.TimeSlots = timeSlots; 
+            ViewBag.TimeSlots = timeSlots;
             ViewBag.Guests = guests;
             ViewBag.SelectedDateTime = selectedTime;
             ViewBag.SittingId = sittings[0].Id;
 
-            return View("TimeSlotList");
+            return View("Index");
         }
 
         // GET: /Reservation/Search
         [HttpGet]
         public IActionResult Search()
         {
-            return View();
+            return View("Index");
         }
 
         // GET: /Reservation/Book
@@ -98,12 +93,11 @@ namespace BeanScene.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View("Book");
+                return View("Index");
             }
 
             Person? person = null;
 
-            // Get the current user and find or create a corresponding Person entity
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser != null)
             {
@@ -114,7 +108,7 @@ namespace BeanScene.Controllers
                     {
                         Name = currentUser.UserName ?? "",
                         Email = currentUser.Email ?? "",
-                        Phone = currentUser.Email ??"" 
+                        Phone = currentUser.Email ?? ""
                     };
 
                     person.UserId = currentUser.Id;
@@ -123,7 +117,6 @@ namespace BeanScene.Controllers
                 }
             }
 
-            // Find the sitting by ID and ensure it is not closed
             var sitting = await _context.Sittings
                 .Include(s => s.Reservations)
                 .FirstOrDefaultAsync(s => s.Id == sittingId && !s.Closed);
@@ -133,12 +126,11 @@ namespace BeanScene.Controllers
                 return NotFound("Sitting not available.");
             }
 
-            // Pass the booking details to the view
             ViewBag.SittingId = sittingId;
             ViewBag.Guests = guests;
             ViewBag.SelectedTimeSlot = selectedTimeSlot;
 
-            return View("Book", new Reservation
+            return View("Index", new Reservation
             {
                 Start = selectedTimeSlot,
                 Pax = guests,
@@ -153,12 +145,11 @@ namespace BeanScene.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(reservation);
+                return View("Index", reservation);
             }
 
             try
             {
-                // Find or create the person based on the provided email
                 var person = await _context.Persons.FirstOrDefaultAsync(p => p.Email!.ToLower() == reservation.Person.Email!.ToLower());
                 if (person == null)
                 {
@@ -175,7 +166,6 @@ namespace BeanScene.Controllers
                 reservation.PersonId = person.Id;
                 reservation.Person = null!;
 
-                // Validate sitting
                 var sitting = await _context.Sittings
                     .Include(s => s.Reservations)
                     .FirstOrDefaultAsync(s => s.Id == reservation.SittingId);
@@ -183,10 +173,9 @@ namespace BeanScene.Controllers
                 if (sitting == null || sitting.Closed)
                 {
                     ModelState.AddModelError("", "Sitting not available.");
-                    return View(reservation);
+                    return View("Index", reservation);
                 }
 
-                // Validate capacity
                 var overlappingReservations = sitting.Reservations
                     .Where(r => r.Start < reservation.End && r.End > reservation.Start);
                 var totalPax = overlappingReservations.Sum(r => r.Pax);
@@ -194,29 +183,25 @@ namespace BeanScene.Controllers
                 if ((sitting.Capacity - totalPax) < reservation.Pax)
                 {
                     ModelState.AddModelError("Pax", $"The maximum capacity for this sitting is {sitting.Capacity}. Only {sitting.Capacity - totalPax} spots are available.");
-                    return View(reservation);
+                    return View("Index", reservation);
                 }
 
-                // Calculate the end time of the reservation (2 hours from the start)
                 DateTime end = reservation.Start.AddHours(2);
 
-                // Fetch all available tables for the given time slot
                 var availableTables = await _context.RestaurantTables
-                    .Include(t => t.Reservations) // Include reservations for the availability check
-                    .Where(t => t.Reservations.All(r => r.End <= reservation.Start || r.Start >= end)) // No overlapping reservations
+                    .Include(t => t.Reservations)
+                    .Where(t => t.Reservations.All(r => r.End <= reservation.Start || r.Start >= end))
                     .ToListAsync();
 
                 if (!availableTables.Any())
                 {
                     ModelState.AddModelError("", "No tables available for the selected time.");
-                    return View(reservation);
+                    return View("Index", reservation);
                 }
 
-                // Select one table (random or best-fit) from the available tables
                 var random = new Random();
                 var assignedTable = availableTables[random.Next(availableTables.Count)];
 
-                // Assign the selected table to the reservation
                 reservation.Tables = new List<RestaurantTable> { assignedTable };
 
                 _context.Reservations.Add(reservation);
@@ -228,7 +213,7 @@ namespace BeanScene.Controllers
             {
                 _logger.LogError(ex, "Error booking reservation.");
                 ModelState.AddModelError("", "Unexpected error occurred.");
-                return View("Book", reservation);
+                return View("Index", reservation);
             }
         }
     }
