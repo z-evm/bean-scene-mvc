@@ -268,71 +268,7 @@ h2 {
     border-color: #dee2e6;
 }
 
-/* Container for time slots */
-.time-slot-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: 15px;
-    margin-top: 20px;
-}
 
-/* Time slot button styles */
-.time-slot-box {
-    display: inline-block;
-    width: 100%;
-    height: 60px;
-    background-color: #f8f9fa;
-    color: #333;
-    text-align: center;
-    line-height: 60px;
-    font-size: 16px;
-    font-weight: bold;
-    border: 2px solid transparent;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Available slot styles */
-.time-slot-box.available {
-    background-color: #4AA1B5;
-    color: white;
-    border: 2px solid #4AA1B5;
-}
-
-.time-slot-box.available:hover,
-.time-slot-box.available:focus {
-    background-color: #378a97;
-    border-color: #2d7281;
-    box-shadow: 0 4px 8px rgba(74, 161, 181, 0.3);
-}
-
-/* Unavailable slot styles */
-.time-slot-box.unavailable {
-    background-color: #e0e0e0;
-    color: #999;
-    cursor: not-allowed;
-    border: 2px solid #ccc;
-}
-
-.time-slot-box.unavailable:hover {
-    background-color: #e0e0e0; /* Keep same color on hover */
-    border-color: #ccc;
-}
-
-/* Disabled slots */
-.time-slot-box:disabled {
-    pointer-events: none;
-    opacity: 0.6;
-}
-
-/* Selected slot */
-.time-slot-box.selected {
-    background-color: #ffc107;
-    color: #333;
-    border-color: #ffca2c;
-}
 
 /* Responsive text alignment */
 .text-center {
@@ -349,4 +285,111 @@ h2 {
 button:focus {
     outline: none;
 }
+
+/* Time slot section*/
+
+.time-slot-section {
+    color: rgba(8, 57, 68, 1);
+}
+
+/* Time Slot Form Styling */
+.time-slot-form {
+    max-width: 500px; /* Optimized width */
+    margin: 2rem auto; /* Center with margin */
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9); /* Light translucent background */
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Time Slot Grid */
+.time-slot-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Adjusted button size */
+    gap: 10px;
+    margin-top: 20px;
+    justify-content: center;
+}
+
+/* Time Slot Button */
+.time-slot-box {
+    display: block;
+    width: 100%;
+    height: 45px; /* Reduced height */
+    font-size: 14px; /* Reduced font size */
+    font-weight: 600;
+    text-align: center;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    line-height: 45px; /* Center text */
+}
+
+/* Available Slot */
+.time-slot-box.available {
+    background-color: var(--bean-light-blue);
+    color: white;
+    border: 2px solid var(--bean-light-blue);
+}    
+
+.time-slot-box.available:hover,
+.time-slot-box.available:focus {
+    background-color: #378a97;
+    border-color: #2d7281;
+    box-shadow: 0 4px 6px rgba(74, 161, 181, 0.3);
+}
+
+/* Unavailable Slot */
+.time-slot-box.unavailable {
+    background-color: #e0e0e0;
+    color: #999;
+    cursor: not-allowed;
+    border: 2px solid #ccc;
+}
+
+.time-slot-box.unavailable:hover {
+    border-color: #ccc;
+}
+
+/* Disabled Button */
+.time-slot-box:disabled {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+/* Active/Selected Slot */
+.time-slot-box.selected {
+    background-color: #ffc107;
+    color: #333;
+    border-color: #ffca2c;
+}
+
+/* Form Title */
+.time-slot-form h2 {
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--bean-dark-blue);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .time-slot-box {
+        height: 40px;
+        font-size: 12px;
+        line-height: 40px;
+    }
+
+    .time-slot-grid {
+        gap: 8px;
+    }
+
+    .time-slot-form {
+        padding: 15px;
+    }
+}
+
 
