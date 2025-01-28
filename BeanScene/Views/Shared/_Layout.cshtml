@@ -32,10 +32,15 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Contact" asp-action="Index">Contact Us</a>
                         </li>
-                        @if (User.Identity!.IsAuthenticated)
+                        @if (User.IsInRole("Member"))
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="UserReservation" asp-action="Index">History</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Staff") || (User.IsInRole("Manager"))) {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="Staff" asp-controller="Home" asp-action="Index">Staff Area</a>
                             </li>
                         }
                     </ul>

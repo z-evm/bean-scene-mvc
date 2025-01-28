@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BeanScene.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BeanScene.Areas.Staff.Controllers
 {
-    [Authorize(Roles = "Staff,Admin"), Area("Staff")]
+    [Authorize(Roles = "Staff, Manager, Admin"), Area("Staff")]
     public class StaffAreaController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -19,7 +20,7 @@ namespace BeanScene.Areas.Staff.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(DateTime? date)
+        public async Task<IActionResult> Reservation(DateTime? date)
         {
             if (!ModelState.IsValid)
             {
