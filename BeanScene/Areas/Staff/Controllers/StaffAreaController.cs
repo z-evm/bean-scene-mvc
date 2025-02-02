@@ -19,30 +19,30 @@ namespace BeanScene.Areas.Staff.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Reservation(DateTime? date)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //[HttpGet]
+        //public async Task<IActionResult> Index(DateTime? date)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            var selectedDate = date?.Date ?? DateTime.Today;
-            var nextDay = selectedDate.AddDays(1);
+        //    var selectedDate = date?.Date ?? DateTime.Today;
+        //    var nextDay = selectedDate.AddDays(1);
 
-            var reservations = await _context.Reservations
-                .Include(r => r.Person)
-                .Include(r => r.Sitting)
-                .Include(r => r.ReservationStatus)
-                .Include(r => r.Tables)
-                .Where(r => r.Start >= selectedDate && r.Start < nextDay)
-                .OrderBy(r => r.Start)
-                .ToListAsync();
+        //    var reservations = await _context.Reservations
+        //        .Include(r => r.Person)
+        //        .Include(r => r.Sitting)
+        //        .Include(r => r.ReservationStatus)
+        //        .Include(r => r.Tables)
+        //        .Where(r => r.Start >= selectedDate && r.Start < nextDay)
+        //        .OrderBy(r => r.Start)
+        //        .ToListAsync();
 
-            ViewBag.SelectedDate = selectedDate;
+        //    ViewBag.SelectedDate = selectedDate;
 
-            return View(reservations);
-        }
+        //    return View(reservations);
+        //}
 
         [HttpPost]
         [ValidateAntiForgeryToken]
