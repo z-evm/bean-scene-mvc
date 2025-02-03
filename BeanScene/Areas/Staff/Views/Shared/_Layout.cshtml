@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] Staff</title>
+    <title>@ViewData["Title"] - Bean Scene</title>
     <link rel="stylesheet" href="~/lib/twitter-bootstrap/css/bootstrap.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/BeanScene.styles.css" asp-append-version="true" />
@@ -21,13 +21,10 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                             <a class="nav-link text-dark" asp-area="Staff" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Staff" asp-controller="StaffArea" asp-action="Search">Reservations </a>
+                             <a class="nav-link text-dark" asp-area="Staff" asp-controller="Home" asp-action="Index">Reservations</a>
                         </li>
                         <li>
-                            <a class="nav-link text-dark" asp-area="Staff" asp-controller="StaffArea" asp-action="Index">Reservations List</a>
+                            <a class="nav-link text-dark" asp-area="Staff" asp-controller="Home" asp-action="Index">Reservations List</a>
                         </li>
                         @* @if (User.IsInRole("Admin")) *@
                         @* { *@

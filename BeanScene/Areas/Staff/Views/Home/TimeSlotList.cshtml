@@ -7,7 +7,7 @@
 
     @if (timeSlots != null && timeSlots.Any())
     {
-        <form asp-action="Book" method="get" class="p-4 shadow rounded bg-light">
+        <form asp-action="Book" controller="Home" class="p-4 shadow rounded bg-light">
             @Html.AntiForgeryToken()
 
             <!-- Include SittingId and Guests -->
